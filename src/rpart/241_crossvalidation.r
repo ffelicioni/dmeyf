@@ -8,8 +8,6 @@ require("data.table")
 require("parallel")
 require("rpart")
 
-#setwd( "M:\\" )
-
 #ksemillas  <- c(102191, 200177, 410551, 552581, 892237) #reemplazar por las propias semillas
 
 setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  
@@ -54,7 +52,6 @@ ArbolesCrossValidation  <- function( data, param, qfolds, semilla )
 {
   divi  <- rep( 1, qfolds )
   particionar( data, divi, seed=semilla )
-
   ganancias  <- mcmapply( ArbolSimple, 
                           seq(qfolds), # 1 2 3 4 5  
                           MoreArgs= list( data, param), 
