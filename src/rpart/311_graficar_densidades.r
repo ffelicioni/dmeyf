@@ -32,7 +32,6 @@ for( campo in  campos_buenos )
        col="blue",
        xlim= c( a1, a2),
        main= paste0("Densidades    ",  campo), )
-  
   lines(densidadB, col="red", lty=2)
   
   legend(  "topright",  
@@ -40,4 +39,5 @@ for( campo in  campos_buenos )
            col=c("blue", "red"), lty=c(1,2))
   
 }
+
 dev.off()
