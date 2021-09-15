@@ -9,7 +9,6 @@ require("rlist")
 require("parallel")
 require("rpart")
 
-#setwd( "M:\\" )
 
 #ksemillas  <- c(102191, 200177, 410551, 552581, 892237) #reemplazar por las propias semillas
 ksemillas  <- c(100003, 101207, 103577, 103457, 104089)
@@ -76,7 +75,6 @@ ArbolesCrossValidation  <- function( data, param, qfolds, semilla )
 {
   divi  <- rep( 1, qfolds )
   particionar( data, divi, seed=semilla )
-
   ganancias  <- mcmapply( ArbolSimple, 
                           seq(qfolds), # 1 2 3 4 5  
                           MoreArgs= list( data, param), 
@@ -92,7 +90,6 @@ ArbolesCrossValidation  <- function( data, param, qfolds, semilla )
 dataset  <- fread("./datasetsOri/paquete_premium_202009.csv")
 
 #reduzco la exploracion arrancando con un maxdepth de minimo 4,  pongo ceiling para que vminbucket no pueda ser 0 
-
 for( vcp in c( -1, 0) ) 
 for( vmaxdepth in  c(4,5,6,7,8,10,12,14,16) )
 for( vminsplit in  c(2,4, 8, 10, 15, 20, 30, 50, 100, 150, 200, 300, 400 ) )
