@@ -35,6 +35,7 @@ for( campo in  campos_buenos )
   a2  <- qdrift[[2]]
   
   
+
   plot(drift, 
        col="blue",
        main= paste0("DELTA    ",  campo),
@@ -50,4 +51,12 @@ for( campo in  campos_buenos )
   
 }
 
+dev.off()  #dejo de graficar
+      )
+
+ abline( v=0, col="darkgreen" )
+  legend(  "topright",  
+          legend=c("A", "B"),
+          col=c("blue", "darkgreen"), lty=c(1,2))
+}
 dev.off()  #dejo de graficar
