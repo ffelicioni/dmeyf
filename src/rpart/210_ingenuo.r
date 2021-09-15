@@ -7,7 +7,6 @@ require("rpart")
 
 #Aqui se debe poner la carpeta de la computadora local
 setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
-
 #cargo los datos
 dtrain  <- fread("./datasetsOri/paquete_premium_202009.csv")
 dapply  <- fread("./datasetsOri/paquete_premium_202011.csv")
