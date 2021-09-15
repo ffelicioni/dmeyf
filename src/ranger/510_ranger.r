@@ -13,8 +13,8 @@ require("ranger")
 require("randomForest")  #solo se usa para imputar nulos
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
 
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
 #cargo los datos donde entreno
 dtrain  <- fread("./datasetsOri/paquete_premium_202009.csv", stringsAsFactors= TRUE)
 
@@ -38,7 +38,6 @@ param  <- list( "num.trees"=      500,  #cantidad de arboles
               )
 
 set.seed(100003) #Establezco la semilla aleatoria
-
 modelo  <- ranger( formula= "clase_binaria ~ .",
                    data=  dtrain, 
                    probability=   TRUE,  #para que devuelva las probabilidades
