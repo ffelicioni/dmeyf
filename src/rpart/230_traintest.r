@@ -8,7 +8,6 @@ require("rpart")
 #Aqui se debe poner la carpeta de la computadora local
 #setwd("M:\\")  #Establezco el Working Directory
 setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
-
 #cargo los datos
 dataset  <- fread("./datasetsOri/paquete_premium_202009.csv")
 
