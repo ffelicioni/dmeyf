@@ -9,7 +9,6 @@ require("rpart")
 
 #Aqui se debe poner la carpeta de la computadora local
 setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
-
 #cargo los datos donde entreno
 dtrain  <- fread("./datasetsOri/paquete_premium_202009.csv")
 
@@ -24,7 +23,6 @@ parametros  <-  list( "cp"=-0.668285152166367, "minsplit"=1310,  "minbucket"=240
 
 #list( "cp"=-1, "minsplit"=900,  "minbucket"=440, "maxdepth"=5 )
 #-0.668285152166367	1310	240	11	5
-
 num_trees         <-  10    #voy a generar 10 arboles
 feature_fraction  <-   0.5  #entreno cada arbol con solo 50% de las variables variables
 

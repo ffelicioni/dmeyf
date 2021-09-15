@@ -19,7 +19,9 @@ require("mlrMBO")
 
 
 #defino la carpeta donde trabajo
+
 setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
+
 
 
 kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es para continuar procesando
@@ -39,7 +41,9 @@ hs  <- makeParamSet(
           forbidden = quote( minbucket > 0.5*minsplit ) )
 
 
+
 ksemilla_azar  <- 100003  #Aqui poner la propia semilla
+
 #------------------------------------------------------------------------------
 #Funcion que lleva el registro de los experimentos
 
@@ -145,7 +149,11 @@ ArbolesAzarosos_CrossValidation  <- function( data, param, pcampos_buenos, qfold
                           seq(qfolds), # 1 2 3 4 5  
                           MoreArgs= list( data, param, pcampos_buenos), 
                           SIMPLIFY= FALSE,
+<<<<<<< HEAD
                           mc.cores= 1 )   #se puede subir a 5 si posee Linux o Mac OS
+=======
+                          mc.cores= 5 )   #se puede subir a 5 si posee Linux o Mac OS
+>>>>>>> 9048e6ad6f868e0d428a33a53f652d768ec254d6
                                           #Se se usa Windows, obligatoriamente debe ser  1
 
   data[ , fold := NULL ]
@@ -277,6 +285,10 @@ if(!file.exists(kbayesiana)) {
 } else  run  <- mboContinue( kbayesiana )   #retomo en caso que ya exista
 
 
+<<<<<<< HEAD
 #quit( save="no" )
+=======
+quit( save="no" )
+>>>>>>> 9048e6ad6f868e0d428a33a53f652d768ec254d6
 
 
