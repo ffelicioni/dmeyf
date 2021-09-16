@@ -10,8 +10,14 @@ gc()
 require("data.table")
 require("lightgbm")
 
-setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
+library(pacman)
+p_load(this::path)
+setwd(this.path::this.dir())
+source('./lib/features_eng.R')
 
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
+datos<-6
+datitos<-mostrar(5)
 #cargo el dataset
 dataset  <- fread("./datasetsOri/paquete_premium_202009.csv")
 
@@ -29,7 +35,7 @@ dtrain  <- lgb.Dataset( data=  data.matrix(  dataset[ , campos_buenos, with=FALS
 
 #Solo uso DOS hiperparametros,  max_bin  y min_data_in_leaf
 #Dadme un punto de apoyo y movere el mundo, Arquimedes
-modelo  <- lightgbm( data= dtrain,
+modelo  <- lightgbm( data= dtrain, 
                      params= list( objective= "binary",
                                    max_bin= 15,
                                    min_data_in_leaf= 4000,
