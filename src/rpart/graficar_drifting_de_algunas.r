@@ -65,10 +65,13 @@ datasetB$mactivos_margen_rank<-datasetB$mactivos_margen+datasetB$mcomisiones
 
 datasetB$mactivos_margen_rank<-bin_eq_freq$suavizado
 
-zz<-rank(round(datasetA$mactivos_margen+313),ties.method="min")
-datasetA$mactivos_margen_rank<-zz
+zz<-rank(round(datasetA$mactivos_margen),ties.method="min")
+
+datasetA$mactivos_margen_rank<-datasetA$mactivos_margen+rep(-774.1267,235354)
 
 zz<-rank(round(datasetB$mactivos_margen),ties.method="min")
+
+zz<-datasetB$mactivos_margen
 datasetB$mactivos_margen_rank<-zz
 campos_buenos<-c("mactivos_margen_rank")
 
@@ -301,10 +304,13 @@ for( campo in  campos_buenos )
 
 library(dplyr)
 df1<-data.table(datasetA$numero_de_cliente,rank(datasetA$mactivos_margen,ties.method="min"))
+
+df1<-data.table(datasetA$numero_de_cliente,datasetA$mactivos_margen)
 colnames(df1)<-c("numero_de_cliente","mactivos_margenA")
 df1[, tipoA := rep("A",length(datasetA$numero_de_cliente))]
 
 df2<-data.table(datasetB$numero_de_cliente,rank(datasetB$mactivos_margen,ties.method="min"))
+df2<-data.table(datasetB$numero_de_cliente,datasetB$mactivos_margen)
 colnames(df2)<-c("numero_de_cliente","mactivos_margenB")
 df2[, tipoB := rep("B",length(datasetB$numero_de_cliente))]
 
@@ -319,17 +325,23 @@ campo=c(colA,colB)
 sub_tablita<-tablita[,campo, with=FALSE] 
 DT.m1 = melt(sub_tablita, measure = list(colA, colB))
 colnames(DT.m1)<-c('variable','mactivos_margen','tipo')
-aov.df<-aov(mactivos_margen~as.factor(tipo),data=DT.m1[,c('mactivos_margen','tipo')])
+
+DT.m1$tipo<-factor(DT.m1$tipo)
+aov.df<-aov(mactivos_margen~tipo,data=DT.m1[,c('mactivos_margen','tipo')])
 summary(aov.df)
 shapiro.test(residuals(aov.df))
 library(nortest)
 ad.test(residuals(aov.df))
 #el test F rechaza la igualdad de medias a nivel 0:05.
 library(car)
-leveneTest(mactivos_margen~as.factor(tipo) ,data=DT.m1[,c('mactivos_margen','tipo')])
+leveneTest(mactivos_margen~tipo ,data=DT.m1[,c('mactivos_margen','tipo')])
 # no se cumple la homocedasticidad
 
-kruskal.test(mactivos_margen~as.factor(tipo),data=DT.m1[,c('mactivos_margen','tipo')])
+kruskal.test(mactivos_margen~tipo,data=DT.m1[,c('mactivos_margen','tipo')])
+
+TukeyHSD(aov.df,conf.level=0.95)
+# Real iza las comparaciones mú l t i p l e s a p o s t e r i
+
 library("ggplot2")
 ggplot(DT.m1[,c('mactivos_margen','tipo')],aes(sample=residuals(aov.df)))+
   stat_qq(alpha=0.5,color="royalblue")+
