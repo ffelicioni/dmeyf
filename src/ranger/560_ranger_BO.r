@@ -252,10 +252,5 @@ if(!file.exists(kbayesiana)) {
 } else  run  <- mboContinue( kbayesiana )   #retomo en caso que ya exista
 
 
-<<<<<<< HEAD
 #quit( save="no" )
-=======
-quit( save="no" )
->>>>>>> 9048e6ad6f868e0d428a33a53f652d768ec254d6
-
 
