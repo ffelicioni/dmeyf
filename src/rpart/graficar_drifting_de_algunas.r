@@ -149,9 +149,7 @@ correccion_habiles <- function(fin_de_mes,x)
       rango<-fin_de_mes-days(seq(0,dias_mora-1))
       feriados<-date(c("2020-07-09","2020-07-10","2020-08-17","2020-10-12","2020-11-23"))#faltan cargar todos los feriados del año
       rangof<-rango[!rango %in% feriados]                                   #se sacan los dias que son feriados de la secuencia
-      #print(rangof)
       rm(rango)
-      #print(rangof[!weekdays(rangof) %in% c("Saturday", "Sunday")])
       return (sum(!weekdays(rangof) %in% c("Saturday", "Sunday")))
     }
       else{ return (NA)    } 
@@ -222,10 +220,32 @@ for (i in 1:length(nivelesr)){
 
 #datasetB$Master_Finiciomora_ok<-datasetB$Master_Finiciomora
 
+datasetA[ , mv_Finiciomora  := pmin( Master_Finiciomora, Visa_Finiciomora, na.rm = TRUE) ]
+datasetB[ , mv_Finiciomora  := pmin( Master_Finiciomora, Visa_Finiciomora, na.rm = TRUE) ]
+
 campos_buenos<-c("Master_Finiciomora_h")  # revisar
+campos_buenos<-c("mv_Finiciomora")  # revisar
 
-campos_buenos<-c("mactivos_margen")
+campos_buenos<-c("Master_Finiciomora")  # revisar
+#campos_buenos<-c("mactivos_margen")
 
+datasetA$Master_fultimo_cierre<-datasetA$Master_fultimo_cierre+5
+
+campos<-c("numero_de_cliente","Master_Finiciomora","Master_fultimo_cierre")
+df1<-datasetA[,campos,with=FALSE]
+df2<-datasetB[,campos,with=FALSE]
+tabla<-merge(df1, df2, by='numero_de_cliente', all.x = T)
+tabla<-merge(df1, df2, by='numero_de_cliente', all.y = T)
+
+zz<-(data.table(tabla,datasetA$clase_ternaria))
+xx<-zz[zz[,V2]=='BAJA+1']
+xx[is.na(xx[,Master_Finiciomora.x])!=TRUE]
+
+tabla[is.na(tabla)]<-0 # reemplazo con ceros si algún cliente no esta en 202011
+nombre<-c(paste0("cuotas_",campos[2]))
+
+
+#campos_buenos<-c("Master_fultimo_cierre")
 #pdf("./work/data_delta_01.pdf")
 for( campo in  campos_buenos )
 {
