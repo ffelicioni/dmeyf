@@ -11,7 +11,7 @@ require("data.table")
 
 
 #Establezco el Working Directory
-setwd( "~/buckets/b1/crudoB" )
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf") 
 
 
 EnriquecerDataset <- function( dataset , arch_destino )
@@ -121,4 +121,4 @@ dataset2  <- fread("./datasetsOri/paquete_premium_202011.csv")
 EnriquecerDataset( dataset1, "./datasets/paquete_premium_202009_ext.csv" )
 EnriquecerDataset( dataset2, "./datasets/paquete_premium_202011_ext.csv" )
 
-quit( save="no")
+#quit( save="no")
