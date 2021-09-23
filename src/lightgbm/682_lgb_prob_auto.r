@@ -28,7 +28,7 @@ require("mlrMBO")
 #para poder usarlo en la PC y en la nube sin tener que cambiar la ruta
 #cambiar aqui las rutas en su maquina
 switch ( Sys.info()[['sysname']],
-         Windows = { directory.root  <-  "M:\\" },   #Windows
+         Windows = { directory.root   <-  "C:/Users/Flavia/Documents/DataScience/dmeyf"},   #Windows
          Darwin  = { directory.root  <-  "~/dm/" },  #Apple MAC
          Linux   = { directory.root  <-  "~/buckets/b1/" } #Google Cloud
        )
@@ -40,8 +40,12 @@ setwd( directory.root )
 kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es para continuar procesando
 
 kscript           <- "682_lgb_prob_auto"
-karch_generacion  <- "./datasetsOri/paquete_premium_202009.csv"
-karch_aplicacion  <- "./datasetsOri/paquete_premium_202011.csv"
+#karch_generacion  <- "./datasetsOri/paquete_premium_202009.csv"
+#karch_aplicacion  <- "./datasetsOri/paquete_premium_202011.csv"
+
+karch_generacion  <- "./datasets/paquete_premium_202009_ext.csv"
+karch_aplicacion  <- "./datasets/paquete_premium_202011_ext.csv"
+
 kBO_iter    <-  150   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 #Aqui se cargan los hiperparametros
@@ -52,9 +56,9 @@ hs <- makeParamSet(
          makeIntegerParam("num_leaves",       lower=16L   , upper= 1024L)
         )
 
-campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo" )   #aqui se deben cargar todos los campos culpables del Data Drifting
+campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo","internet","tmobile_app","ctrx_quarter")   #aqui se deben cargar todos los campos culpables del Data Drifting
 
-ksemilla_azar  <- 102191  #Aqui poner la propia semilla
+ksemilla_azar  <- 100003   #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
 #Funcion que lleva el registro de los experimentos
 
