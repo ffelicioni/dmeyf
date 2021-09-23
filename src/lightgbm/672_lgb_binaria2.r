@@ -28,7 +28,7 @@ require("mlrMBO")
 #para poder usarlo en la PC y en la nube sin tener que cambiar la ruta
 #cambiar aqui las rutas en su maquina
 switch ( Sys.info()[['sysname']],
-         Windows = { directory.root  <-  "M:\\" },   #Windows
+         Windows = { directory.root   <-  "C:/Users/Flavia/Documents/DataScience/dmeyf" },   #Windows
          Darwin  = { directory.root  <-  "~/dm/" },  #Apple MAC
          Linux   = { directory.root  <-  "~/buckets/b1/" } #Google Cloud
        )
@@ -40,8 +40,12 @@ setwd( directory.root )
 kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es para continuar procesando
 
 kscript           <- "672_lgb_binaria2"
-karch_generacion  <- "./datasetsOri/paquete_premium_202009.csv"
-karch_aplicacion  <- "./datasetsOri/paquete_premium_202011.csv"
+#karch_generacion  <- "./datasetsOri/paquete_premium_202009.csv"
+#karch_aplicacion  <- "./datasetsOri/paquete_premium_202011.csv"
+karch_generacion  <- "./datasets/paquete_premium_202009_ext.csv"
+karch_aplicacion  <- "./datasets/paquete_premium_202011_ext.csv"
+
+
 kBO_iter    <-  150   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 #Aqui se cargan los hiperparametros
@@ -55,7 +59,7 @@ hs <- makeParamSet(
 
 campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo" )   #aqui se deben cargar todos los campos culpables del Data Drifting
 
-ksemilla_azar  <- 102191  #Aqui poner la propia semilla
+ksemilla_azar  <- 100003  #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
 #Funcion que lleva el registro de los experimentos
 
@@ -148,7 +152,7 @@ EstimarGanancia_lightgbm  <- function( x )
 
   param_completo  <- c( param_basicos, param_variable, x )
 
-  set.seed( 999983 )
+  set.seed(102191)
   modelocv  <- lgb.cv( data= dtrain,
                        eval= fganancia_logistic_lightgbm,
                        stratified= TRUE, #sobre el cross validation
@@ -293,6 +297,19 @@ system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
 #        wait=FALSE )
 
 
-quit( save="no" )
+#quit( save="no" )
 
+prediccion_ingenuo  <- predict( modelo,  data.matrix( dataset[  , campos_buenos, with=FALSE]))
+ingenuo  <- as.data.table( list( "numero_de_cliente"= dataset[  , numero_de_cliente],
+                                 "Predicted"= as.numeric(prediccion_ingenuo > 0.0309) ) ) #genero la salida 0.031
 
+#ingenuo  <- as.data.table( list( "numero_de_cliente"= dataset[  , numero_de_cliente],
+#                                 "Predicted"= as.numeric(prediccion_ingenuo > 0.05664) ) ) #genero la salida 0.031
+
+evaluacion<-data.table(prediccion_ingenuo,ingenuo,dataset$clase_ternaria)
+colnames(evaluacion)<- c('prediccion_ingenuo','numero_de_cliente','Predicted','clase_ternaria') 
+evaluacion$clase_ternaria<-factor(evaluacion$clase_ternaria)
+evaluacion$Predicted<-factor(evaluacion$Predicted)
+tablita<-table(evaluacion$clase_ternaria,evaluacion$Predicted)
+print(tablita)
+ganancia_ing<-tablita[2,2]*48500-(tablita[1,2]+tablita[3,2])*1250
