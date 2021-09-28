@@ -1,0 +1,16 @@
+AUC,variable_mas_drift
+0.998709250679994,internet
+0.999768104232198,Master_fultimo_cierre
+0.999812109227179,Visa_fultimo_cierre
+0.969426006414401,cmobile_app_trx
+0.92294169703259,tmobile_app
+0.811602690741488,mforex_sell
+0.80070636801694,Visa_mconsumosdolares
+0.748284947190371,cforex_sell
+0.748147390969731,cforex
+0.73526763028406,Visa_mpagado
+0.719576038350347,ctarjeta_visa_descuentos
+0.714274421503584,mtarjeta_visa_descuentos
+0.705350652421917,ccajeros_propios_descuentos
+0.705843818305343,mcaja_ahorro_dolares
+0.689335590184519,cliente_antiguedad
