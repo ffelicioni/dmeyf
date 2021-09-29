@@ -57,7 +57,7 @@ hs <- makeParamSet(
          makeNumericParam("prob_corte",       lower= 0.020, upper=    0.055)
         )
 
-campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo" )   #aqui se deben cargar todos los campos culpables del Data Drifting
+#campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo" )   #aqui se deben cargar todos los campos culpables del Data Drifting
 
 ksemilla_azar  <- 100003  #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ EstimarGanancia_lightgbm  <- function( x )
 
   param_completo  <- c( param_basicos, param_variable, x )
 
-  set.seed(102191)
+  set.seed(100003)
   modelocv  <- lgb.cv( data= dtrain,
                        eval= fganancia_logistic_lightgbm,
                        stratified= TRUE, #sobre el cross validation
@@ -239,7 +239,7 @@ dataset  <- fread(karch_generacion)
 dataset[ , clase01:= ifelse( clase_ternaria=="CONTINUA", 0, 1 ) ]
 
 
-
+campos_malos  <- c("foto_mes","ccajas_transacciones", "Master_mpagominimo","internet","tmobile_app","cmobile_app_trx","mforex_sell","Visa_mconsumosdolares","mv_mconsumosdolares","mvr_mconsumosdolares","ctarjeta_visa_descuentos","Visa_fultimo_cierre")   #aqui se deben cargar todos los campos culpables del Data Drifting
 #los campos que se van a utilizar
 campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01", campos_malos) )
 
@@ -306,10 +306,10 @@ ingenuo  <- as.data.table( list( "numero_de_cliente"= dataset[  , numero_de_clie
 #ingenuo  <- as.data.table( list( "numero_de_cliente"= dataset[  , numero_de_cliente],
 #                                 "Predicted"= as.numeric(prediccion_ingenuo > 0.05664) ) ) #genero la salida 0.031
 
-evaluacion<-data.table(prediccion_ingenuo,ingenuo,dataset$clase_ternaria)
-colnames(evaluacion)<- c('prediccion_ingenuo','numero_de_cliente','Predicted','clase_ternaria') 
-evaluacion$clase_ternaria<-factor(evaluacion$clase_ternaria)
-evaluacion$Predicted<-factor(evaluacion$Predicted)
-tablita<-table(evaluacion$clase_ternaria,evaluacion$Predicted)
-print(tablita)
-ganancia_ing<-tablita[2,2]*48500-(tablita[1,2]+tablita[3,2])*1250
+#evaluacion<-data.table(prediccion_ingenuo,ingenuo,dataset$clase_ternaria)
+#colnames(evaluacion)<- c('prediccion_ingenuo','numero_de_cliente','Predicted','clase_ternaria') 
+#evaluacion$clase_ternaria<-factor(evaluacion$clase_ternaria)
+#evaluacion$Predicted<-factor(evaluacion$Predicted)
+#tablita<-table(evaluacion$clase_ternaria,evaluacion$Predicted)
+#print(tablita)
+#ganancia_ing<-tablita[2,2]*48500-(tablita[1,2]+tablita[3,2])*1250
