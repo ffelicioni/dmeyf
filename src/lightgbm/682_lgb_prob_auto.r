@@ -18,11 +18,15 @@ require("data.table")
 require("rlist")
 require("yaml")
 
+require("parallel")
+
 require("lightgbm")
 
 #paquetes necesarios para la Bayesian Optimization
 require("DiceKriging")
 require("mlrMBO")
+
+library(Rcpp)
 
 
 #para poder usarlo en la PC y en la nube sin tener que cambiar la ruta
@@ -37,7 +41,7 @@ setwd( directory.root )
 
 
 
-kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es para continuar procesando
+kexperimento  <- 6   #NA si se corre la primera vez, un valor concreto si es para continuar procesando
 
 kscript           <- "682_lgb_prob_auto"
 #karch_generacion  <- "./datasetsOri/paquete_premium_202009.csv"
@@ -56,7 +60,7 @@ hs <- makeParamSet(
          makeIntegerParam("num_leaves",       lower=16L   , upper= 1024L)
         )
 
-campos_malos  <- c( "ccajas_transacciones", "Master_mpagominimo","internet","tmobile_app","ctrx_quarter")   #aqui se deben cargar todos los campos culpables del Data Drifting
+
 
 ksemilla_azar  <- 100003   #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
@@ -149,14 +153,14 @@ EstimarGanancia_lightgbm  <- function( x )
                           num_iterations= 9999,    #un numero muy grande, lo limita early_stopping_rounds
                           force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
                         )
-
+  
   #el parametro discolo, que depende de otro
   param_variable  <- list(  early_stopping_rounds= as.integer(50 + 5/x$learning_rate) )
 
   param_completo  <- c( param_basicos, param_variable, x )
 
   VPROBS_CORTE  <<- c()
-  set.seed( 999983 )
+  set.seed( 100003 )
   modelocv  <- lgb.cv( data= dtrain,
                        eval= fganancia_logistic_lightgbm,
                        stratified= TRUE, #sobre el cross validation
@@ -244,9 +248,11 @@ dataset  <- fread(karch_generacion)
 dataset[ , clase01:= ifelse( clase_ternaria=="CONTINUA", 0, 1 ) ]
 
 
+#"ctrx_quarter"   ,"mcuentas_saldo", ,"ccajas_transacciones", "numero_de_cliente"
+campos_malos  <- c("ccajas_transacciones","foto_mes", "Master_mpagominimo","internet","tmobile_app","cmobile_app_trx","mforex_sell","Visa_mconsumosdolares","mv_mconsumosdolares","mvr_mconsumosdolares","ctarjeta_visa_descuentos","Visa_fultimo_cierre")   #aqui se deben cargar todos los campos culpables del Data Drifting
 
 #los campos que se van a utilizar
-campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01", campos_malos) )
+campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01", campos_malos) ) #
 
 #dejo los datos en el formato que necesita LightGBM
 #uso el weight como un truco ESPANTOSO para saber la clase real
@@ -292,7 +298,7 @@ if(!file.exists(kbayesiana)) {
 
 
 #apagado de la maquina virtual, pero NO se borra
-system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
+#system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
 
 #suicidio,  elimina la maquina virtual directamente
 #system( "sleep 10  && 
@@ -302,6 +308,6 @@ system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
 #        wait=FALSE )
 
 
-quit( save="no" )
+#quit( save="no" )
 
 
