@@ -11,7 +11,7 @@ gc()             #garbage collection
 require("data.table")
 require("lightgbm")
 
-setwd("~/buckets/b1/")
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread("./datasetsOri/paquete_premium_202009.csv")
@@ -37,8 +37,7 @@ modelo  <- lgb.train( data= dtrain,
 dapply  <- fread("./datasetsOri/paquete_premium_202011.csv")
 
 #aplico el modelo a los datos nuevos
-prediccion  <- predict( modelo, 
-                        data.matrix( dapply[, campos_buenos, with=FALSE ])                                 )
+prediccion  <- predict( modelo, data.matrix( dapply[, campos_buenos, with=FALSE ]))
 
 
 #Genero la entrega para Kaggle
