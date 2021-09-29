@@ -24,14 +24,16 @@ EnriquecerDataset <- function( dataset , arch_destino )
   
   #cambio el dataset de entrenamiento
   if (dataset$foto_mes[1]==202009){
-    dataset$cliente_antiguedad<-dataset$cliente_antiguedad+2
-    dataset$mactivos_margen<-dataset$mactivos_margen+rep(-774.1267,235354)
-    dataset$Master_fultimo_cierre<-dataset$Master_fultimo_cierre+5
+    dataset[,cliente_antiguedad:=cliente_antiguedad+2]
+    #dataset$mactivos_margen<-dataset$mactivos_margen#+rep(-774.1267,235354)
+    
+    dataset[,Master_fultimo_cierre:=Master_fultimo_cierre+5]
+    dataset[,Visa_fultimo_cierre:=Visa_fultimo_cierre+5]
   }
   
   dataset[,matm_extraccion<-ifelse(dataset$catm_trx==0, 0, dataset$matm/dataset$catm_trx)]
   dataset[,matm_other_extraccion<-ifelse(dataset$catm_trx_other==0, 0, dataset$matm_other/dataset$catm_trx_other)]
-  
+  dataset[,rforex_sell:=mforex_sell/cforex_sell]
   
   dataset[ , mv_status01       := pmax( Master_status,  Visa_status, na.rm = TRUE) ]
   dataset[ , mv_status02       := Master_status +  Visa_status ]
