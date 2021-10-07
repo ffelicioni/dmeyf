@@ -17,6 +17,7 @@ ftirar <- function( prob, qty )
 mejor      <-  0.7
 peloton    <-  ( 501:599 ) / 1000
 peloton    <-  seq(501,599,4) / 1000
+peloton<-seq(501,599,10)/1000
 
 jugadores  <-  c(peloton,mejor) #intencionalmente el mejor esta al comienzo
 
@@ -38,9 +39,9 @@ for(  tiros_libres  in seq(30,100)) #10, 20, 50, 100, 200,300,400, 415, 460, 600
   {
     vaciertos <- mapply( ftirar, jugadores, tiros_libres ) 
     #print(vaciertos)
-    tb_resultados  <- rbind( tb_resultados, list(vaciertos[26]))
+    tb_resultados  <- rbind( tb_resultados, list(vaciertos[11]))
     mejor  <- which.max( vaciertos )
-    if( mejor == 26)  primero_ganador <- primero_ganador + 1
+    if( mejor == 11)  primero_ganador <- primero_ganador + 1
   }
 
   cat( tiros_libres, primero_ganador/5000, "\n" )
