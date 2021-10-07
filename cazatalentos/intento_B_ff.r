@@ -2,6 +2,11 @@
 #que NO logra solucionarlo, una que falta una idea fundamental, una chispa, un Momento Eureka
 #pero crea estructura sobre la cual trabajar
 
+#ideas principales, en cada ronda se acumulan los aciertos de los que siguen en carrera
+#la probabilida del primer tiro tiene que superar al 50% para que super a la mediana,
+#el segundo tiro deberia superar a 75% ya que es la mediana de la mediana (si se dio el evento ell segundo tiro p>1-(1-p(1))*.5)
+#sigue así hasta que hayan tirado los ultimos los 415 tiros y con suerte el hganador llego hasta ahí
+
 
 #limpio la memoria
 rm( list=ls() )
@@ -24,7 +29,7 @@ GLOBAL_tiros_total  <- 0
 #debajo de ese numero esta el indice_de_enceste  que NO puede ser visto por el cazatalentos
 gimnasio_init  <- function() 
 {
-  GLOBAL_jugadores  <<-  sample( c( (501:599 ) / 1000 , 0.7 ) )
+  GLOBAL_jugadores  <<-  sample( c( (501:599 )/1000 , 0.7 ) )
   GLOBAL_tiros_total  <<- 0
 }
 
@@ -35,7 +40,7 @@ gimnasio_tirar  <- function(  pids,  pcantidad )
 {
   GLOBAL_tiros_total  <<-  GLOBAL_tiros_total + length( pids )*pcantidad
   res  <- mapply(  ftirar, GLOBAL_jugadores[pids], pcantidad )
-
+  
   return( res )
 }
 
@@ -49,13 +54,14 @@ gimnasio_veredicto  <- function( pid )
 }
 #------------------------------------------------------------------------------
 
-Estrategia_A  <- function()
+
+Estrategia_B  <- function()
 {
   #Estrategia
-  #En la primer ronda se hace tirar 90 tiros libres a cada uno de los 100 jugadores ( se gastan 9000 tiros )
-  #Se eligen a la mejor mitad de primer ronda( se descarta a la otra mitad)
-  #En la segunda ronda, a la mejor mitad de la primera se los hace tirar 400 tiros a cada uno
-  #Se elige el mejor jugador de la segunda ronda
+  #Se juegan varias rondas
+  #En cada ronda, los jugadores que participan, tiran x tiros
+  #De una ronda a la otra, solo pasan los que tuvieron igual o mayor aciertos a la mediana de aciertos de la ronda anterior
+  #Se elige el mejor jugador de la septima ronda
 
   gimnasio_init()
 
@@ -63,31 +69,33 @@ Estrategia_A  <- function()
   #el id es el numero que tiene en la espalda cada jugador
   planilla_cazatalentos  <- data.table( "id"= 1:100 )
 
-  #Ronda 1  ------------------------------------------------------
-  #tiran los 100 jugadores es decir 1:100   90  tiros libres cada uno
-  ids_juegan1  <- 1:100   #los jugadores que participan en la ronda,
+  ctiros<-c(85,61,61,61,61,61,30) 
+  
+  #ctiros<-c(115,61,61,61,61,61,30) 
+  
+  
+  ids_juegan_ini  <- 1:100   #los jugadores que participan en la ronda,
+  
+  planilla_cazatalentos[ ids_juegan_ini,  tiros_acum := 0]  #registro en la planilla
+  planilla_cazatalentos[ ids_juegan_ini,  acumulados := 0]  #registro en la planilla
+  
+  for (i in 1:1){
+    planilla_cazatalentos[ ids_juegan_ini,  c(paste0('tiros',i))  := ctiros[i] ]  #registro en la planilla que tiran x tiros
+    resultado  <- gimnasio_tirar( ids_juegan_ini, ctiros[i])
+    
+    planilla_cazatalentos[ ids_juegan_ini,  c(paste0('aciertos',i))  := resultado ]  
+    planilla_cazatalentos[ ids_juegan_ini,  tiros_acum := tiros_acum+ctiros[i]]  
+    planilla_cazatalentos[ ids_juegan_ini,  acumulados := acumulados+resultado]  
+    #planilla_cazatalentos[ ids_juegan_ini,  c(paste0('p',i)) := acumulados/tiros_acum]  #para calcular la tasa de aciertos si uno quisiera
+    #planilla_cazatalentos[ ids_juegan_ini,  c(paste0('s',i)):=sqrt(acumulados)/tiros_acum] #para calcular el desvio si uno quisiera
 
-  N1<-34
-  planilla_cazatalentos[ ids_juegan1,  tiros1 := N1]  #registro en la planilla que tiran 90 tiros
+    mediana  <- planilla_cazatalentos[ ids_juegan_ini, median(acumulados) ]
+    ids_juegan_fin  <- planilla_cazatalentos[ ids_juegan_ini][ acumulados >= mediana, id ]
+    ids_juegan_ini<-ids_juegan_fin
+  }
+  
 
-  #Hago que tiren
-  resultado1  <- gimnasio_tirar( ids_juegan1, N1)
-  planilla_cazatalentos[ ids_juegan1,  aciertos1 := resultado1 ]  #registro en la planilla
-
-  #Ronda 2 -------------------------------------------------------
-  #A la mitad mejor la hago tirar 400 tiros cada uno
-  #La mediana siempre parte a un conjunto en dos partes de igual cantidad
-  mediana  <- planilla_cazatalentos[ ids_juegan1, median(aciertos1) ]
-  ids_juegan2  <- planilla_cazatalentos[ ids_juegan1 ][ aciertos1 >= mediana, id ]
-
-  N2<-400-34
-  planilla_cazatalentos[ ids_juegan2,  tiros2 := N2 ]  #registro en la planilla que tiran 400 tiros
-  resultado2  <- gimnasio_tirar( ids_juegan2, N2)
-  planilla_cazatalentos[ ids_juegan2,  aciertos2 := resultado2 ]  #registro en la planilla
-
-  #Epilogo
-  #El cazatalentos toma una decision, elige al que mas aciertos tuvo en la ronda2
-  pos_mejor <-  planilla_cazatalentos[ , which.max(aciertos2) ]
+  pos_mejor <-  planilla_cazatalentos[ , which.max(acumulados) ]
   id_mejor  <-  planilla_cazatalentos[ pos_mejor, id ]
 
   #Finalmente, la hora de la verdadero_mejor
@@ -100,15 +108,16 @@ Estrategia_A  <- function()
 
 #Aqui hago la Estimacion Montecarlo del porcentaje de aciertos que tiene la estrategia A
 
-set.seed( 102191 )  #debe ir una sola vez, ANTES de los experimentos
+set.seed( 100003 )  #debe ir una sola vez, ANTES de los experimentos
+#set.seed(123456)
 
 tabla_veredictos  <- data.table(  tiros_total=integer(),  acierto=integer() )
 
 for( experimento  in  1:10000 )
 {
   if( experimento %% 1000 == 0 )  cat( experimento, " ")  #desprolijo, pero es para saber por donde voy
-
-  veredicto  <- Estrategia_A()
+  
+  veredicto  <- Estrategia_B()
   
   tabla_veredictos  <- rbind( tabla_veredictos, veredicto )
 }
@@ -118,9 +127,8 @@ cat("\n")
 tiros_total  <-  tabla_veredictos[  , max( tiros_total) ]
 tasa_eleccion_correcta  <-  tabla_veredictos[  , mean( acierto) ]
 
-tiros_total
+tiros_total 
 tasa_eleccion_correcta
 
-#Esta estrategia elije al verdadero_mejor el 99% de las veces
-#pero lamentablemente necesita de un total de 36600   tiros libres
+
 

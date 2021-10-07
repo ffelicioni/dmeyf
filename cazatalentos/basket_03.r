@@ -1,6 +1,6 @@
 require("data.table")
 
-set.seed( 102191 )
+set.seed( 100003 )
 
 #calcula cuantos encestes logra un jugador con indice de enceste prob que hace qyt tiros libres
 ftirar <- function( prob, qty )
@@ -21,7 +21,7 @@ for( i in 1:10 )
    vaciertos <- mapply( ftirar, jugadores, 10 )  #cada jugador tira 10 tiros libres
 
    mejor <- which.max( vaciertos )
-
+   print(jugadores[mejor])
    aciertos_torneo <-  vaciertos[ mejor ]
 
    aciertos_segunda <- ftirar( jugadores[mejor], 10 )

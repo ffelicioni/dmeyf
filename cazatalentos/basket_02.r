@@ -1,6 +1,6 @@
 require("data.table")
 
-set.seed( 102191 )
+set.seed( 100003 )
 
 #calcula cuantos encestes logra un jugador con indice de enceste prob que hace qyt tiros libres
 ftirar <- function( prob, qty )

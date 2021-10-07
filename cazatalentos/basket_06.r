@@ -8,17 +8,18 @@ ftirar <- function( prob, qty )
   return(  sum( runif(qty) < prob ) )
 }
 
-jordan   <- 0.85
-peloton  <- rep( 0.6, 99 )  #jugadores identicos
+mejor   <- 0.7
+peloton    <-  ( 501:599 ) / 1000
+jugadores  <-  c( peloton, mejor )  #intencionalmente el mejor esta al final
 
-jugadores  <- c( jordan, peloton )
 
-for( i in 1:10 )
+for( i in 1:100 )
 {
    vaciertos  <- mapply( ftirar, jugadores, 100 )  #cada jugador tira 100 tiros libres
 
    mejor  <- which.max( vaciertos )
 
+   print(mejor)
    aciertos_torneo  <-  vaciertos[ mejor ]
 
    aciertos_segunda  <- ftirar( jugadores[mejor], 100 )

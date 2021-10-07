@@ -239,7 +239,9 @@ dataset  <- fread(karch_generacion)
 dataset[ , clase01:= ifelse( clase_ternaria=="CONTINUA", 0, 1 ) ]
 
 
-campos_malos  <- c("foto_mes","ccajas_transacciones", "Master_mpagominimo","internet","tmobile_app","cmobile_app_trx","mforex_sell","Visa_mconsumosdolares","mv_mconsumosdolares","mvr_mconsumosdolares","ctarjeta_visa_descuentos","Visa_fultimo_cierre")   #aqui se deben cargar todos los campos culpables del Data Drifting
+#campos_malos  <- c("foto_mes","ccajas_transacciones", "Master_mpagominimo","internet","tmobile_app","cmobile_app_trx","mforex_sell","Visa_mconsumosdolares","mv_mconsumosdolares","mvr_mconsumosdolares","ctarjeta_visa_descuentos","Visa_fultimo_cierre")   #aqui se deben cargar todos los campos culpables del Data Drifting
+campos_malos  <- c("ccajas_transacciones","foto_mes", "Master_mpagominimo","internet","tmobile_app","cmobile_app_trx","mforex_sell","Visa_mconsumosdolares","mv_mconsumosdolares","mvr_mconsumosdolares","ctarjeta_visa_descuentos","Visa_fultimo_cierre")   #aqui se deben cargar todos los campos culpables del Data Drifting
+
 #los campos que se van a utilizar
 campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01", campos_malos) )
 
