@@ -1127,3 +1127,85 @@ plot(x6(:,1),x6(:,2))
 x=[1, 2, 3, 4,5]
 y1=[31.5 70 108 144 188 ]
 y2=[33 69 108 146 183]
+
+
+
+
+n=[50:100]
+
+nn=[]
+cg=[]
+cp=[]
+k=50
+
+pg=0.7
+pp=0.599
+for i=1:50
+    n=i+50;
+    nn(i)=n;
+    cg(i)=nchoosek(n,k)*pg^k*(1-pg)^(n-k);
+    cp(i)=nchoosek(n,k)*pp^k*(1-pp)^(n-k);
+end
+
+plot(nn,cg)
+hold on
+plot(nn,cp)
+
+k=50
+n=83
+pg1=nchoosek(n,k)*pg^k*(1-pg)^(n-k)
+pp1=nchoosek(n,k)*pp^k*(1-pp)^(n-k)
+
+varg=83*pg*(1-pg)
+esperadog=83*pg
+(49.5-(esperadog))/sqrt(varg)
+
+
+
+k=75
+pg=pg1
+pp=pp1
+for i=1:50
+    n=i+100;
+    nn(i)=n;
+    cg(i)=nchoosek(n,k)*pg^k*(1-pg)^(n-k);
+    cp(i)=nchoosek(n,k)*pp^k*(1-pp)^(n-k);
+end
+
+plot(nn,cg)
+hold on
+plot(nn,cp)
+
+
+nn=[]
+cg=[]
+cp=[]
+k=99
+pg=0.7
+pp=0.599
+for i=1:75
+    n=i+400;
+    nn(i)=n;
+    cg(i)=nchoosek(n,k)*pg^k*(1-pg)^(n-k);
+    cp(i)=nchoosek(n,k)*pp^k*(1-pp)^(n-k);
+end
+
+plot(nn,cg)
+hold on
+plot(nn,cp)
+
+
+
+k=88
+pg=0.7
+pp=0.599
+for i=1:75
+    n=i+88;
+    nn(i)=n;
+    cg(i)=nchoosek(n,k)*pg^k*(1-pg)^(n-k);
+    cp(i)=nchoosek(n,k)*pp^k*(1-pp)^(n-k);
+end
+
+plot(nn,cg)
+hold on
+plot(nn,cp)

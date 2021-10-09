@@ -71,27 +71,80 @@ Estrategia_B  <- function()
 
   ctiros<-c(85,61,61,61,61,61,30) 
   
-  #ctiros<-c(115,61,61,61,61,61,30) 
+  ctiros<-c(85,55,61,61,61,61,30) 
   
+  ctiros<-c(85,45,61,61,61,61,30) 
+  
+  ctiros<-c(85,46,61,61,61,61,30) 
+  
+  ctiros<-c(85,46,61,61,61,61,30) 
+  ctiros<-c(90,154-90,61,61,61,61,30) 
   
   ids_juegan_ini  <- 1:100   #los jugadores que participan en la ronda,
   
   planilla_cazatalentos[ ids_juegan_ini,  tiros_acum := 0]  #registro en la planilla
   planilla_cazatalentos[ ids_juegan_ini,  acumulados := 0]  #registro en la planilla
   
-  for (i in 1:1){
+  for (i in 1:2){
+    
+    print(paste0('ronda',i))
     planilla_cazatalentos[ ids_juegan_ini,  c(paste0('tiros',i))  := ctiros[i] ]  #registro en la planilla que tiran x tiros
     resultado  <- gimnasio_tirar( ids_juegan_ini, ctiros[i])
     
     planilla_cazatalentos[ ids_juegan_ini,  c(paste0('aciertos',i))  := resultado ]  
     planilla_cazatalentos[ ids_juegan_ini,  tiros_acum := tiros_acum+ctiros[i]]  
     planilla_cazatalentos[ ids_juegan_ini,  acumulados := acumulados+resultado]  
-    #planilla_cazatalentos[ ids_juegan_ini,  c(paste0('p',i)) := acumulados/tiros_acum]  #para calcular la tasa de aciertos si uno quisiera
-    #planilla_cazatalentos[ ids_juegan_ini,  c(paste0('s',i)):=sqrt(acumulados)/tiros_acum] #para calcular el desvio si uno quisiera
-
+    planilla_cazatalentos[ ids_juegan_ini,  c(paste0('p',i)) := acumulados/tiros_acum]  #para calcular la tasa de aciertos si uno quisiera
+    
+    planilla_cazatalentos[ ids_juegan_ini,  c(paste0('p',i)) := acumulados/tiros_acum]  #para calcular la tasa de aciertos si uno quisiera
+    planilla_cazatalentos[ ids_juegan_ini,  c(paste0('s',i)):=sqrt(acumulados)/tiros_acum] #para calcular el desvio si uno quisiera
+ 
     mediana  <- planilla_cazatalentos[ ids_juegan_ini, median(acumulados) ]
+    print(mediana/sum(ctiros[1:i]))
+    media  <- planilla_cazatalentos[ ids_juegan_ini, mean(acumulados/tiros_acum) ]
+    desvio<-planilla_cazatalentos[ ids_juegan_ini, sd(acumulados/tiros_acum) ]
+    #print(media)
+    #print(desvio)
+    #print(media+desvio)
+    
+    if (i>5){
+      mediana<-((mediana+1)/(mediana+2))
+    }
     ids_juegan_fin  <- planilla_cazatalentos[ ids_juegan_ini][ acumulados >= mediana, id ]
     ids_juegan_ini<-ids_juegan_fin
+    mediana  <- planilla_cazatalentos[ ids_juegan_ini, median(acumulados) ]
+    print(mediana/sum(ctiros[1:i]))
+    media  <- planilla_cazatalentos[ ids_juegan_ini, mean(acumulados/tiros_acum) ]
+    desvio<-planilla_cazatalentos[ ids_juegan_ini, sd(acumulados/tiros_acum) ]
+    #print(media)
+    #print(desvio)
+    print(length(ids_juegan_ini))
+    print(resultado/ctiros[i])
+    
+    maximo<-planilla_cazatalentos[ ids_juegan_ini, max(acumulados) ]
+    print(planilla_cazatalentos[ ids_juegan_ini, max(acumulados) ])
+    
+    indice_max1<-planilla_cazatalentos[ ,  which.max(acumulados)]
+    id_max1  <-  planilla_cazatalentos[ indice_max1, id ]
+    max_actual1<-planilla_cazatalentos[ id_max1, acumulados]
+    print(max_actual1)
+    
+    print(ids_juegan_ini)
+    print(id_max1)
+    vector<-ids_juegan_ini[ids_juegan_ini!=id_max1]
+    print(vector)
+    print(max_actual1)
+    
+    #ter_max_actual1<-planilla_cazatalentos[ vector, max(acumulados)]
+    print(planilla_cazatalentos[ ids_juegan_ini, sort(acumulados)])
+    
+    #vector<-ids_juegan_ini[ids_juegan_ini!=id_max1]
+    #print(vector)
+    #print(max_actual1)
+    
+    #seg_max_actual1<-planilla_cazatalentos[ vector, max(acumulados)]
+    #print(seg_max_actual1)
+    
   }
   
 
@@ -113,7 +166,7 @@ set.seed( 100003 )  #debe ir una sola vez, ANTES de los experimentos
 
 tabla_veredictos  <- data.table(  tiros_total=integer(),  acierto=integer() )
 
-for( experimento  in  1:10000 )
+for( experimento  in  1:10 )
 {
   if( experimento %% 1000 == 0 )  cat( experimento, " ")  #desprolijo, pero es para saber por donde voy
   
