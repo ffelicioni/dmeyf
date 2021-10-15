@@ -29,11 +29,12 @@ require("lightgbm")
 require("DiceKriging")
 require("mlrMBO")
 
+#setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
 
 #para poder usarlo en la PC y en la nube sin tener que cambiar la ruta
 #cambiar aqui las rutas en su maquina
 switch ( Sys.info()[['sysname']],
-         Windows = { directory.root  <-  "M:\\" },   #Windows
+         Windows = { directory.root  <-  "C:/Users/Flavia/Documents/DataScience/dmeyf" },   #Windows
          Darwin  = { directory.root  <-  "~/dm/" },  #Apple MAC
          Linux   = { directory.root  <-  "~/buckets/b1/crudoB/" } #Google Cloud
        )
@@ -46,7 +47,7 @@ kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es pa
 
 kscript         <- "847_epic_stacking"
 
-karch_dataset    <- "./datasets/dataset_stacking_v007.csv.gz"   #este dataset se genero en el script 812_dataset_epic.r
+karch_dataset    <- "./datasets/dataset_stacking_v001.csv.gz"   #este dataset se genero en el script 812_dataset_epic.r
 
 kapply_mes       <- c(202011)  #El mes donde debo aplicar el modelo
 
@@ -294,7 +295,7 @@ EstimarGanancia_lightgbm  <- function( x )
                           boost_from_average= TRUE,
                           feature_pre_filter= FALSE,
                           verbosity= -100,
-                          seed= 999983,
+                          seed= 10003,
                           max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                           lambda_l1= 0.0,         #por ahora, lo dejo fijo
@@ -311,7 +312,7 @@ EstimarGanancia_lightgbm  <- function( x )
 
   VPOS_CORTE  <<- c()
   kfolds  <- 5
-  set.seed( 999983 )
+  set.seed( 10003 )
   modelocv  <- lgb.cv( data= dtrain,
                        eval= fganancia_lgbm_meseta,
                        stratified= TRUE, #sobre el cross validation
@@ -479,6 +480,6 @@ system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
 #        wait=FALSE )
 
 
-quit( save="no" )
+#quit( save="no" )
 
 

@@ -10,7 +10,8 @@ gc()             #garbage collection
 
 require("data.table")
 
-setwd("~/buckets/b1/crudoB/" )
+#setwd("~/buckets/b1/crudoB/" )
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
 
 version  <- "v001"  #cambiar cada vez, asi se tiene versionado del dataset
 

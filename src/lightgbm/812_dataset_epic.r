@@ -18,8 +18,9 @@ require("lightgbm")
 
 
 #defino la carpeta donde trabajo
-directory.root  <-  "~/buckets/b1/"  #Google Cloud
-setwd( directory.root )
+#directory.root  <-  "~/buckets/b1/"  #Google Cloud
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
+#setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
@@ -255,7 +256,7 @@ AgregarVariables  <- function( dataset )
   dataset[ , mv_mconsumototal        := rowSums( cbind( Master_mconsumototal,  Visa_mconsumototal) , na.rm=TRUE ) ]
   dataset[ , mv_cconsumos            := rowSums( cbind( Master_cconsumos,  Visa_cconsumos) , na.rm=TRUE ) ]
   dataset[ , mv_cadelantosefectivo   := rowSums( cbind( Master_cadelantosefectivo,  Visa_cadelantosefectivo) , na.rm=TRUE ) ]
-  dataset[ , mv_mpagominimo          := rowSums( cbind( Master_mpagominimo,  Visa_mpagominimo) , na.rm=TRUE ) ]
+  #dataset[ , mv_mpagominimo          := rowSums( cbind( Master_mpagominimo,  Visa_mpagominimo) , na.rm=TRUE ) ]
 
   #a partir de aqui juego con la suma de Mastercard y Visa
   dataset[ , mvr_Master_mlimitecompra:= Master_mlimitecompra / mv_mlimitecompra ]
@@ -273,7 +274,7 @@ AgregarVariables  <- function( dataset )
   dataset[ , mvr_mpagospesos         := mv_mpagospesos / mv_mlimitecompra ]
   dataset[ , mvr_mpagosdolares       := mv_mpagosdolares / mv_mlimitecompra ]
   dataset[ , mvr_mconsumototal       := mv_mconsumototal  / mv_mlimitecompra ]
-  dataset[ , mvr_mpagominimo         := mv_mpagominimo  / mv_mlimitecompra ]
+  #dataset[ , mvr_mpagominimo         := mv_mpagominimo  / mv_mlimitecompra ]
 
   #Aqui debe usted agregar sus propias nuevas variables
 
@@ -632,6 +633,6 @@ correr_todo  <- function( palancas )
 correr_todo( palancas )
 
 
-quit( save="no" )
+#quit( save="no" )
 
 

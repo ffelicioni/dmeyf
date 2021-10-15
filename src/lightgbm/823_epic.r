@@ -29,11 +29,12 @@ require("lightgbm")
 require("DiceKriging")
 require("mlrMBO")
 
+#setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
 
 #para poder usarlo en la PC y en la nube sin tener que cambiar la ruta
 #cambiar aqui las rutas en su maquina
 switch ( Sys.info()[['sysname']],
-         Windows = { directory.root  <-  "M:\\" },   #Windows
+         Windows = { directory.root  <-  "C:/Users/Flavia/Documents/DataScience/dmeyf" },   #Windows
          Darwin  = { directory.root  <-  "~/dm/" },  #Apple MAC
          Linux   = { directory.root  <-  "~/buckets/b1/" } #Google Cloud
        )
@@ -66,16 +67,17 @@ kBO_iter    <-  150   #cantidad de iteraciones de la Optimizacion Bayesiana
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
          makeNumericParam("learning_rate",    lower=    0.02 , upper=    0.1),
-         makeNumericParam("feature_fraction", lower=    0.1  , upper=    1.0),
+         makeNumericParam("feature_fraction", lower=    0.1  , upper=    0.9),  #para rf debe ser menor a 1, cambio el upper que estaba en 1 por 0.9
          makeIntegerParam("min_data_in_leaf", lower=  100L   , upper= 8000L),
          makeIntegerParam("num_leaves",       lower=    8L   , upper= 1024L),
          makeNumericParam("lambda_l1",    lower=    0.0 , upper=    100.0),
-         makeNumericParam("lambda_l2", lower=    0.0  , upper=    200.0),
+         makeNumericParam("lambda_l2", lower=    0.0  , upper=    200.0)
         )
+
 
 campos_malos  <- c()   #aqui se deben cargar todos los campos culpables del Data Drifting
 
-ksemilla_azar  <- 102191  #Aqui poner la propia semilla
+ksemilla_azar  <- 100003  #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
 #Funcion que lleva el registro de los experimentos
 
@@ -301,7 +303,12 @@ EstimarGanancia_lightgbm  <- function( x )
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                           max_bin= 31,            #por ahora, lo dejo fijo
                           num_iterations= 9999,   #un numero muy grande, lo limita early_stopping_rounds
-                          force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
+                          #lambda_l1=0.0,
+                          #lambda_l2=0.0,
+                          force_row_wise= TRUE,    #para que los alumnos no se atemoricen con tantos warning
+                          boosting="rf",              #para correr random forest,
+                          bagging_fraction=0.9,     #para usar con random forest 
+                          bagging_freq=1L  # agregue este parametro por rf
                         )
 
   #el parametro discolo, que depende de otro
@@ -311,13 +318,13 @@ EstimarGanancia_lightgbm  <- function( x )
 
   VPOS_CORTE  <<- c()
   kfolds  <- 5
-  set.seed( 999983 )
+  set.seed( 100003 )
   modelocv  <- lgb.cv( data= dtrain,
                        eval= fganancia_lgbm_meseta,
                        stratified= TRUE, #sobre el cross validation
                        nfold= kfolds,    #folds del cross validation
                        param= param_completo,
-                       verbose= -100
+                       verbose= -100,
                       )
 
 
@@ -479,6 +486,6 @@ system( "sleep 10  &&  sudo shutdown -h now", wait=FALSE)
 #        wait=FALSE )
 
 
-quit( save="no" )
+#quit( save="no" )
 
 

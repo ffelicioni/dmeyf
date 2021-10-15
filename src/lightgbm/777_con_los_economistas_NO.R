@@ -10,7 +10,9 @@ gc()
 require("data.table")
 require("lightgbm")
 
-setwd("~/buckets/b1/crudoB" )  #establezco la carpeta donde voy a trabajar
+#setwd("~/buckets/b1/crudoB" )  #establezco la carpeta donde voy a trabajar
+
+setwd("C:/Users/Flavia/Documents/DataScience/dmeyf")  #Establezco el Working Directory
 
 #cargo el dataset
 dataset  <- fread("./datasetsOri/paquete_premium_202009.csv")
@@ -36,7 +38,7 @@ modelo  <- lightgbm( data= dtrain,
                                     num_leaves= 20,
                                     learning_rate= 0.013,
                                     num_iterations = 430,
-                                    seed= 999983
+                                    seed= 100003
                                    )  )
 
 
