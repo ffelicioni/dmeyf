@@ -47,7 +47,7 @@ kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es pa
 
 kscript         <- "847_epic_stacking"
 
-karch_dataset    <- "./datasets/dataset_stacking_v001.csv.gz"   #este dataset se genero en el script 812_dataset_epic.r
+karch_dataset    <- "./datasets/dataset_stacking_v003.csv.gz"   #este dataset se genero en el script 812_dataset_epic.r
 
 kapply_mes       <- c(202011)  #El mes donde debo aplicar el modelo
 
@@ -74,7 +74,7 @@ hs <- makeParamSet(
 
 campos_malos  <- c()   #aqui se deben cargar todos los campos culpables del Data Drifting
 
-ksemilla_azar  <- 102191  #Aqui poner la propia semilla
+ksemilla_azar  <- 100003  #Aqui poner la propia semilla
 #------------------------------------------------------------------------------
 #Funcion que lleva el registro de los experimentos
 
@@ -300,7 +300,7 @@ EstimarGanancia_lightgbm  <- function( x )
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                           lambda_l1= 0.0,         #por ahora, lo dejo fijo
                           lambda_l2= 0.0,         #por ahora, lo dejo fijo
-                          max_bin= 31,            #por ahora, lo dejo fijo
+                          max_bin= 650,            #por ahora, lo dejo fijo
                           num_iterations= 9999,   #un numero muy grande, lo limita early_stopping_rounds
                           force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
                         )

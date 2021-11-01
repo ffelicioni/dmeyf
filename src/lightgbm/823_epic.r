@@ -67,11 +67,15 @@ kBO_iter    <-  150   #cantidad de iteraciones de la Optimizacion Bayesiana
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
          makeNumericParam("learning_rate",    lower=    0.02 , upper=    0.1),
-         makeNumericParam("feature_fraction", lower=    0.1  , upper=    0.9),  #para rf debe ser menor a 1, cambio el upper que estaba en 1 por 0.9
-         makeIntegerParam("min_data_in_leaf", lower=  100L   , upper= 8000L),
-         makeIntegerParam("num_leaves",       lower=    8L   , upper= 1024L),
+         makeNumericParam("feature_fraction", lower=    0.1  , upper=    1.0),  #0.9 para rf debe ser menor a 1, cambio el upper que estaba en 1 por 0.9
+         makeIntegerParam("min_data_in_leaf", lower=  1000L   , upper= 25000L), #antes lower=  100L   , upper= 8000L
+         makeIntegerParam("num_leaves",       lower=    16L   , upper= 100L),   #1024L
          makeNumericParam("lambda_l1",    lower=    0.0 , upper=    100.0),
-         makeNumericParam("lambda_l2", lower=    0.0  , upper=    200.0)
+         makeNumericParam("lambda_l2", lower=    0.0  , upper=    200.0),
+         makeIntegerParam("max_bin",       lower=    5L   , upper= 21L)#,
+         #makeIntegerParam("max_depth", lower=4L, upper=10L)
+         #max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo cambie esto para el tercer estacking
+         #max_bin= 31,            #por ahora, lo dejo fijo
         )
 
 
@@ -301,16 +305,28 @@ EstimarGanancia_lightgbm  <- function( x )
                           seed= 999983,
                           max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
-                          max_bin= 31,            #por ahora, lo dejo fijo
+                          #max_bin= 31,            #por ahora, lo dejo fijo
                           num_iterations= 9999,   #un numero muy grande, lo limita early_stopping_rounds
-                          #lambda_l1=0.0,
-                          #lambda_l2=0.0,
-                          force_row_wise= TRUE,    #para que los alumnos no se atemoricen con tantos warning
-                          boosting="rf",              #para correr random forest,
-                          bagging_fraction=0.9,     #para usar con random forest 
-                          bagging_freq=1L  # agregue este parametro por rf
+                          #lambda_l1=0.0,         #se paso arriba
+                          #lambda_l2=0.0,         #simi
+                          force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
+                          #boosting="rf",              #para correr random forest,
+                          #bagging_fraction=0.9,     #para usar con random forest 
+                          #bagging_freq=1L  # agregue este parametro por rf
                         )
 
+  
+  # en esta linea estab originalmente
+  #dejo los datos en el formato que necesita LightGBM
+  #uso el weight como un truco ESPANTOSO para saber la clase real
+  dtrain  <- lgb.Dataset( data=    data.matrix(  dataset[ entrenamiento==1 , campos_buenos, with=FALSE]),
+                          label=   dataset[ entrenamiento==1, clase01],
+                          weight=  dataset[ entrenamiento==1, ifelse(clase_ternaria=="CONTINUA", 1/ktrain_subsampling,
+                                                                     ifelse( clase_ternaria=="BAJA+2", 1, 1.0000001))] ,
+                          free_raw_data= TRUE
+  )
+  
+  gc()
   #el parametro discolo, que depende de otro
   param_variable  <- list(  early_stopping_rounds= as.integer(50 + 1/x$learning_rate) )
 
@@ -433,14 +449,6 @@ dataset[    foto_mes>= ktrain_mes_desde  &
 campos_buenos  <- setdiff( colnames(dataset), 
                            c("clase_ternaria","clase01", "generacion_final", "entrenamiento", "fold", campos_malos) )
 
-#dejo los datos en el formato que necesita LightGBM
-#uso el weight como un truco ESPANTOSO para saber la clase real
-dtrain  <- lgb.Dataset( data=    data.matrix(  dataset[ entrenamiento==1 , campos_buenos, with=FALSE]),
-                        label=   dataset[ entrenamiento==1, clase01],
-                        weight=  dataset[ entrenamiento==1, ifelse(clase_ternaria=="CONTINUA", 1/ktrain_subsampling,
-                                                                   ifelse( clase_ternaria=="BAJA+2", 1, 1.0000001))] ,
-                        free_raw_data= TRUE
-                      )
 
 
 #Aqui comienza la configuracion de la Bayesian Optimization
