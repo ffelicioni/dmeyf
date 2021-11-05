@@ -22,7 +22,7 @@ setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v951"   #Muy importante, ir cambiando la version
+palancas$version  <- "v951_2"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -30,10 +30,10 @@ palancas$corregir <-  TRUE    # TRUE o FALSE
 
 palancas$nuevasvars <-  FALSE  #si quiero hacer Feature Engineering manual
 
-palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
+palancas$dummiesNA  <-  TRUE #La idea de Santiago Dellachiesa
 
-palancas$lag1   <- FALSE    #lag de orden 1
-palancas$delta1 <- FALSE    # campo -  lag de orden 1 
+palancas$lag1   <- TRUE    #lag de orden 1
+palancas$delta1 <- TRUE    # campo -  lag de orden 1 
 palancas$lag2   <- FALSE
 palancas$delta2 <- FALSE
 palancas$lag3   <- FALSE
@@ -554,7 +554,7 @@ CanaritosImportancia  <- function( dataset )
                  boost_from_average= TRUE,
                  feature_pre_filter= FALSE,
                  verbosity= -100,
-                 seed= 999983,
+                 seed= 100005,
                  max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                  min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                  lambda_l1= 0.0,         #por ahora, lo dejo fijo
