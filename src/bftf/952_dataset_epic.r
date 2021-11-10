@@ -22,7 +22,7 @@ setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v952"   #Muy importante, ir cambiando la version
+palancas$version  <- "v954"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -34,10 +34,10 @@ palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
 
 palancas$lag1   <- TRUE    #lag de orden 1
 palancas$delta1 <- TRUE    # campo -  lag de orden 1 
-palancas$lag2   <- FALSE
-palancas$delta2 <- FALSE
-palancas$lag3   <- FALSE
-palancas$delta3 <- FALSE
+palancas$lag2   <- TRUE
+palancas$delta2 <- TRUE
+palancas$lag3   <- TRUE
+palancas$delta3 <- TRUE
 palancas$lag4   <- FALSE
 palancas$delta4 <- FALSE
 palancas$lag5   <- FALSE
@@ -60,7 +60,7 @@ palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 
 
-palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
+palancas$canaritosimportancia  <- TRUE  #si me quedo solo con lo mas importante de canaritosimportancia
 
 
 #escribo para saber cuales fueron los parametros
@@ -554,7 +554,7 @@ CanaritosImportancia  <- function( dataset )
                  boost_from_average= TRUE,
                  feature_pre_filter= FALSE,
                  verbosity= -100,
-                 seed= 999983,
+                 seed= 100005,
                  max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                  min_gain_to_split= 0.0, #por ahora, lo dejo fijo
                  lambda_l1= 0.0,         #por ahora, lo dejo fijo
