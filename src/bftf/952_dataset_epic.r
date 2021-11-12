@@ -22,7 +22,7 @@ setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v954"   #Muy importante, ir cambiando la version
+palancas$version  <- "v955"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -36,8 +36,8 @@ palancas$lag1   <- TRUE    #lag de orden 1
 palancas$delta1 <- TRUE    # campo -  lag de orden 1 
 palancas$lag2   <- TRUE
 palancas$delta2 <- TRUE
-palancas$lag3   <- TRUE
-palancas$delta3 <- TRUE
+palancas$lag3   <- FALSE
+palancas$delta3 <- FALSE
 palancas$lag4   <- FALSE
 palancas$delta4 <- FALSE
 palancas$lag5   <- FALSE
@@ -45,8 +45,8 @@ palancas$delta5 <- FALSE
 palancas$lag6   <- FALSE
 palancas$delta6 <- FALSE
 
-palancas$promedio3  <- FALSE  #promedio  de los ultimos 3 meses
-palancas$promedio6  <- FALSE
+palancas$promedio3  <- TRUE  #promedio  de los ultimos 3 meses
+palancas$promedio6  <- TRUE
 
 palancas$minimo3  <- FALSE  #minimo de los ultimos 3 meses
 palancas$minimo6  <- FALSE
@@ -330,6 +330,37 @@ Lags  <- function( dataset, cols, nlag, deltas )
 
   ReportarCampos( dataset )
 }
+
+#------------------------------------------------------------------------------
+# Agrega cantidad de cuotas pendientes
+Cuotas <- function(dataset)
+{
+  dataset[,cuotas_prestamos_hipotecarios:=mprestamos_hipotecarios/mprestamos_hipotecarios_delta1]
+  dataset[,cuotas_mprestamos_personales:=mprestamos_personales/mprestamos_personales_delta1]
+  dataset[,cuotas_mprestamos_prendarios:=mprestamos_prendarios/mprestamos_prendarios_delta1]
+    
+  #valvula de seguridad para evitar valores infinitos paso los infinitos a NULOS
+  infinitos      <- lapply(names(dataset),function(.name) dataset[ , sum(is.infinite(get(.name)))])
+  infinitos_qty  <- sum( unlist( infinitos) )
+  if( infinitos_qty > 0 )
+  {
+    cat( "ATENCION, hay", infinitos_qty, "valores infinitos en tu dataset. Seran pasados a NA\n" )
+    dataset[mapply(is.infinite, dataset)] <- NA
+  }
+  #valvula de seguridad para evitar valores NaN  que es 0/0
+  #paso los NaN a 0 , decision polemica si las hay
+  #se invita a asignar un valor razonable segun la semantica del campo creado
+  nans      <- lapply(names(dataset),function(.name) dataset[ , sum(is.nan(get(.name)))])
+  nans_qty  <- sum( unlist( nans) )
+  if( nans_qty > 0 )
+  {
+    cat( "ATENCION, hay", nans_qty, "valores NaN 0/0 en tu dataset. Seran pasados arbitrariamente a 0\n" )
+    cat( "Si no te gusta la decision, modifica a gusto el programa!\n\n")
+    dataset[mapply(is.nan, dataset)] <- 0
+  }
+    
+  ReportarCampos( dataset )
+}
 #------------------------------------------------------------------------------
 #calcula el promedio de los ultimos  nhistoria meses
 
@@ -606,14 +637,17 @@ correr_todo  <- function( palancas )
   if( length(palancas$variablesdrift) > 0 )   DriftEliminar( dataset, palancas$variablesdrift )
 
   if( palancas$dummiesNA )  DummiesNA( dataset )  #esta linea debe ir ANTES de Corregir  !!
-
+  
   if( palancas$corregir )  Corregir( dataset )  #esta linea debe ir DESPUES de  DummiesNA
-
+  
   if( palancas$nuevasvars )  AgregarVariables( dataset )
 
   cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 
   if( palancas$lag1 )   Lags( dataset, cols_analiticas, 1, palancas$delta1 )
+  #nuevas variables cuotas pendientes solo se calcula si existe el lag1
+  if ( palancas$lag1 ) Cuotas(dataset)
+
   if( palancas$lag2 )   Lags( dataset, cols_analiticas, 2, palancas$delta2 )
   if( palancas$lag3 )   Lags( dataset, cols_analiticas, 3, palancas$delta3 )
   if( palancas$lag4 )   Lags( dataset, cols_analiticas, 4, palancas$delta4 )
@@ -637,7 +671,6 @@ correr_todo  <- function( palancas )
 
 
   if( palancas$canaritosimportancia )  CanaritosImportancia( dataset )
-
 
 
   #dejo la clase como ultimo campo
