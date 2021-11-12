@@ -46,7 +46,7 @@ palancas$lag6   <- FALSE
 palancas$delta6 <- FALSE
 
 palancas$promedio3  <- TRUE  #promedio  de los ultimos 3 meses
-palancas$promedio6  <- TRUE
+palancas$promedio6  <- FALSE
 
 palancas$minimo3  <- FALSE  #minimo de los ultimos 3 meses
 palancas$minimo6  <- FALSE
@@ -338,9 +338,10 @@ Cuotas <- function(dataset)
   dataset[,cuotas_prestamos_hipotecarios:=mprestamos_hipotecarios/mprestamos_hipotecarios_delta1]
   dataset[,cuotas_mprestamos_personales:=mprestamos_personales/mprestamos_personales_delta1]
   dataset[,cuotas_mprestamos_prendarios:=mprestamos_prendarios/mprestamos_prendarios_delta1]
-    
+  
+  nombres<-c("cuotas_prestamos_hipotecarios","cuotas_mprestamos_personales","cuotas_mprestamos_prendarios")  
   #valvula de seguridad para evitar valores infinitos paso los infinitos a NULOS
-  infinitos      <- lapply(names(dataset),function(.name) dataset[ , sum(is.infinite(get(.name)))])
+  infinitos      <- lapply(nombres,function(.name) dataset[ , sum(is.infinite(get(.name)))])
   infinitos_qty  <- sum( unlist( infinitos) )
   if( infinitos_qty > 0 )
   {
@@ -350,7 +351,7 @@ Cuotas <- function(dataset)
   #valvula de seguridad para evitar valores NaN  que es 0/0
   #paso los NaN a 0 , decision polemica si las hay
   #se invita a asignar un valor razonable segun la semantica del campo creado
-  nans      <- lapply(names(dataset),function(.name) dataset[ , sum(is.nan(get(.name)))])
+  nans      <- lapply(nombres,function(.name) dataset[ , sum(is.nan(get(.name)))])
   nans_qty  <- sum( unlist( nans) )
   if( nans_qty > 0 )
   {
