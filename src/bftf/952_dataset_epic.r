@@ -335,30 +335,36 @@ Lags  <- function( dataset, cols, nlag, deltas )
 # Agrega cantidad de cuotas pendientes
 Cuotas <- function(dataset)
 {
-  dataset[,cuotas_prestamos_hipotecarios:=mprestamos_hipotecarios/mprestamos_hipotecarios_delta1]
-  dataset[,cuotas_mprestamos_personales:=mprestamos_personales/mprestamos_personales_delta1]
-  dataset[,cuotas_mprestamos_prendarios:=mprestamos_prendarios/mprestamos_prendarios_delta1]
+  dataset[,cuotas_prestamos_hipotecarios:=-mprestamos_hipotecarios/mprestamos_hipotecarios_delta1]
+  dataset[,cuotas_mprestamos_personales:=-mprestamos_personales/mprestamos_personales_delta1]
+  dataset[,cuotas_mprestamos_prendarios:=-mprestamos_prendarios/mprestamos_prendarios_delta1]
   
-  nombres<-c("cuotas_prestamos_hipotecarios","cuotas_mprestamos_personales","cuotas_mprestamos_prendarios")  
-  #valvula de seguridad para evitar valores infinitos paso los infinitos a NULOS
-  infinitos      <- lapply(nombres,function(.name) dataset[ , sum(is.infinite(get(.name)))])
+  #valvula de seguridad para evitar valores infinitos
+  #paso los infinitos a NULOS
+  infinitos      <- lapply(names(dataset[,"cuotas_prestamos_hipotecarios"]),function(.name) dataset[ , sum(is.infinite(get(.name)))])
   infinitos_qty  <- sum( unlist( infinitos) )
   if( infinitos_qty > 0 )
   {
-    cat( "ATENCION, hay", infinitos_qty, "valores infinitos en tu dataset. Seran pasados a NA\n" )
-    dataset[mapply(is.infinite, dataset)] <- NA
+    cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos hipotecarios. Seran pasados a NA\n" )
+    dataset[mapply(is.infinite, dataset[,cuotas_prestamos_hipotecarios])] <- NA
   }
-  #valvula de seguridad para evitar valores NaN  que es 0/0
-  #paso los NaN a 0 , decision polemica si las hay
-  #se invita a asignar un valor razonable segun la semantica del campo creado
-  nans      <- lapply(nombres,function(.name) dataset[ , sum(is.nan(get(.name)))])
-  nans_qty  <- sum( unlist( nans) )
-  if( nans_qty > 0 )
+  
+  infinitos      <- lapply(names(dataset[,"cuotas_mprestamos_personales"]),function(.name) dataset[ , sum(is.infinite(get(.name)))])
+  infinitos_qty  <- sum( unlist( infinitos) )
+  if( infinitos_qty > 0 )
   {
-    cat( "ATENCION, hay", nans_qty, "valores NaN 0/0 en tu dataset. Seran pasados arbitrariamente a 0\n" )
-    cat( "Si no te gusta la decision, modifica a gusto el programa!\n\n")
-    dataset[mapply(is.nan, dataset)] <- 0
+    cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos personales. Seran pasados a NA\n" )
+    dataset[mapply(is.infinite, dataset[,cuotas_mprestamos_personales])] <- NA
   }
+  
+  infinitos      <- lapply(names(dataset[,"cuotas_mprestamos_prendarios"]),function(.name) dataset[ , sum(is.infinite(get(.name)))])
+  infinitos_qty  <- sum( unlist( infinitos) )
+  if( infinitos_qty > 0 )
+  {
+    cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos prendarios. Seran pasados a NA\n" )
+    dataset[mapply(is.infinite, dataset[,cuotas_mprestamos_prendarios])] <- NA
+  }
+  
     
   ReportarCampos( dataset )
 }
