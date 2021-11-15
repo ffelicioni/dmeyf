@@ -87,7 +87,7 @@ dev.off()
 pdf("./work/promedios.pdf")
 for( campo in  campos_buenos )
 {
-  tbl   <- dataset[ foto_mes<=202101 ,  list( "promedio" = mean( get(campo), na.rm=TRUE)) , foto_mes ]
+  tbl   <- dataset[ foto_mes<=202101 ,  list( "promedio" = median( get(campo), na.rm=TRUE)) , foto_mes ]
   ceros <- dataset[ foto_mes<=202101 ,  list( "zero_ratio" = sum(get(campo)==0, na.rm=TRUE)/.N ) , foto_mes ]
   
   plot(x= 1:nrow(tbl),

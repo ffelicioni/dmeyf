@@ -45,7 +45,7 @@ kexperimento  <- NA   #NA si se corre la primera vez, un valor concreto si es pa
 
 kscript         <- "962_epic"
 
-karch_dataset    <- "./datasets/dataset_epic_v956.csv.gz"
+karch_dataset    <- "./datasets/dataset_epic_v952_4.csv.gz"
 
 kapply_mes       <- c(202101)  #El mes donde debo aplicar el modelo
 
@@ -309,7 +309,7 @@ EstimarGanancia_lightgbm  <- function( x )
   param_completo  <- c( param_basicos, param_variable, x )
 
   VPOS_CORTE  <<- c()
-  set.seed( 999983 )
+  set.seed( 100005 )
   modelo  <- lgb.train( data= dtrain,
                         valids= list( valid= dvalid ),
                         eval= fganancia_lgbm_meseta,
