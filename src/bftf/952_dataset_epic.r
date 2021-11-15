@@ -22,7 +22,7 @@ setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v955"   #Muy importante, ir cambiando la version
+palancas$version  <- "v956"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -34,8 +34,8 @@ palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
 
 palancas$lag1   <- TRUE    #lag de orden 1
 palancas$delta1 <- TRUE    # campo -  lag de orden 1 
-palancas$lag2   <- TRUE
-palancas$delta2 <- TRUE
+palancas$lag2   <- FALSE
+palancas$delta2 <- FALSE
 palancas$lag3   <- FALSE
 palancas$delta3 <- FALSE
 palancas$lag4   <- FALSE
@@ -45,7 +45,7 @@ palancas$delta5 <- FALSE
 palancas$lag6   <- FALSE
 palancas$delta6 <- FALSE
 
-palancas$promedio3  <- TRUE  #promedio  de los ultimos 3 meses
+palancas$promedio3  <- FALSE  #promedio  de los ultimos 3 meses
 palancas$promedio6  <- FALSE
 
 palancas$minimo3  <- FALSE  #minimo de los ultimos 3 meses
@@ -60,7 +60,7 @@ palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 
 
-palancas$canaritosimportancia  <- TRUE  #si me quedo solo con lo mas importante de canaritosimportancia
+palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
 
 
 #escribo para saber cuales fueron los parametros
@@ -304,6 +304,125 @@ AgregarVariables  <- function( dataset )
 
   ReportarCampos( dataset )
 }
+
+
+#Corrige interpolando a NA las variables que en ese mes antes habían sido puestas en NA
+
+Interpolar  <- function( dataset )
+{
+  #acomodo los errores del dataset interpolando el futuro y el pasado
+  
+  dataset[ foto_mes==201801,  internet   := pmax( internet_lag1, internet_lead1, na.rm = TRUE)  ]
+  dataset[ foto_mes==201801,  thomebanking   := pmax( thomebanking_lag1, thomebanking_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==201801,  chomebanking_transacciones   := pmin( chomebanking_transacciones_lag1, chomebanking_transacciones_lead1, na.rm = TRUE)]
+  dataset[ foto_mes==201801,  tcallcenter   := pmin( tcallcenter_lag1, tcallcenter_lead1, na.rm = TRUE)  ]
+  dataset[ foto_mes==201801,  ccallcenter_transacciones   := ceiling(0.5*rowSums(cbind(ccallcenter_transacciones_lag1,ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  cprestamos_personales   := ceiling(0.5*rowSums(cbind(cprestamos_personales_lag1,cprestamos_personales_lead1),na.rm=TRUE))  ]
+  dataset[ foto_mes==201801,  mprestamos_personales   := .5*rowSums( cbind( mprestamos_personales_lag1,  mprestamos_personales_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201801,  mprestamos_hipotecarios  := .5*rowSums( cbind( mprestamos_hipotecarios_lag1,  mprestamos_hipotecarios_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201801,  ccajas_transacciones   := ceiling(0.5*rowSums(cbind(ccajas_transacciones_lag1,ccajas_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_consultas   := ceiling(0.5*rowSums(cbind(ccajas_consultas_lag1,ccajas_consultas_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_depositos   := ceiling(0.5*rowSums(cbind(ccajas_depositos_lag1,ccajas_depositos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_extracciones   := ceiling(0.5*rowSums(cbind(ccajas_extracciones_lag1,ccajas_extracciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_otras   := ceiling(0.5*rowSums(cbind(ccajas_otras_lag1,ccajas_otras_lead1),na.rm=TRUE)) ]
+  
+  dataset[ foto_mes==201806,  tcallcenter   :=  pmin( tcallcenter_lag1, tcallcenter_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==201806,  ccallcenter_transacciones   :=  ceiling(0.5*rowSums(cbind(ccallcenter_transacciones_lag1,ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
+  
+  dataset[ foto_mes==201904,  ctarjeta_visa_debitos_automaticos  :=  ceiling(0.5*rowSums(cbind(ctarjeta_visa_debitos_automaticos_lag1,ctarjeta_visa_debitos_automaticos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201904,  mttarjeta_visa_debitos_automaticos := 0.5*rowSums( cbind( mttarjeta_visa_debitos_automaticos_lag1,  mttarjeta_visa_debitos_automaticos_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201904,  Visa_mfinanciacion_limite := 0.5*rowSums( cbind( Visa_mfinanciacion_limite_lag1,  Visa_mfinanciacion_limite_lead1) , na.rm=TRUE ) ]
+  
+  dataset[ foto_mes==201905,  mrentabilidad     := 0.5*rowSums( cbind( mrentabilidad_lag1,  mrentabilidad_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201905,  mrentabilidad_annual     := 0.5*rowSums( cbind( mrentabilidad_annual_lag1,  mrentabilidad_annual_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201905,  mcomisiones      := 0.5*rowSums( cbind( mcomisiones_lag1,  mcomisiones_lead1) , na.rm=TRUE )  ]
+  dataset[ foto_mes==201905,  mpasivos_margen  := 0.5*rowSums( cbind( mpasivos_margen_lag1,  mpasivos_margen_lead1) , na.rm=TRUE )  ]
+  dataset[ foto_mes==201905,  mactivos_margen  := 0.5*rowSums( cbind( mactivos_margen_lag1,  mactivos_margen_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201905,  ctarjeta_visa_debitos_automaticos  := ceiling(0.5*rowSums(cbind(ctarjeta_visa_debitos_automaticos_lag1,ctarjeta_visa_debitos_automaticos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201905,  ccomisiones_otras := ceiling(0.5*rowSums(cbind(ccomisiones_otras_lag1,ccomisiones_otras_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201905,  mcomisiones_otras := 0.5*rowSums( cbind( mcomisiones_otras_lag1,  mcomisiones_otras_lead1) , na.rm=TRUE )]
+  
+  dataset[ foto_mes==201910,  mpasivos_margen   := 0.5*rowSums( cbind( mpasivos_margen_lag1,  mpasivos_margen_lead1) , na.rm=TRUE )]
+  dataset[ foto_mes==201910,  mactivos_margen   := 0.5*rowSums( cbind( mactivos_margen_lag1,  mactivos_margen_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  ccomisiones_otras := ceiling(0.5*rowSums(cbind(ccomisiones_otras_lag1,ccomisiones_otras_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201910,  mcomisiones_otras := 0.5*rowSums( cbind( mcomisiones_otras_lag1,  mcomisiones_otras_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  mcomisiones       := 0.5*rowSums( cbind( mcomisiones_lag1,  mcomisiones_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  mrentabilidad     := 0.5*rowSums( cbind( mrentabilidad_lag1,  mrentabilidad_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  mrentabilidad_annual        := 0.5*rowSums( cbind( mrentabilidad_annual_lag1,  mrentabilidad_annual_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  chomebanking_transacciones  := ceiling(0.5*rowSums(cbind( chomebanking_transacciones_lag1, chomebanking_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201910,  ctarjeta_visa_descuentos    := ceiling(0.5*rowSums(cbind( ctarjeta_visa_descuentos_lag1, ctarjeta_visa_descuentos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201910,  ctarjeta_master_descuentos  := ceiling(0.5*rowSums(cbind( ctarjeta_master_descuentos_lag1, ctarjeta_master_descuentos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201910,  mtarjeta_visa_descuentos    := 0.5*rowSums( cbind( mtarjeta_visa_descuentos_lag1,  mtarjeta_visa_descuentos_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  mtarjeta_master_descuentos  := 0.5*rowSums( cbind( mtarjeta_master_descuentos_lag1,  mtarjeta_master_descuentos_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201910,  ccajeros_propios_descuentos := ceiling(0.5*rowSums(cbind( ccajeros_propios_descuentos_lag1, ccajeros_propios_descuentos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201910,  mcajeros_propios_descuentos := 0.5*rowSums( cbind( mcajeros_propios_descuentos_lag1,  mcajeros_propios_descuentos_lead1) , na.rm=TRUE ) ]
+  
+  dataset[ foto_mes==202001,  cliente_vip   := pmax( cliente_vip_lag1, cliente_vip_lead1, na.rm = TRUE) ]
+  
+  dataset[ foto_mes==202006,  active_quarter   := pmax( active_quarter_lag1, active_quarter_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202006,  internet   := pmax( internet_lag1, internet_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202006,  mrentabilidad   := 0.5*rowSums( cbind( mrentabilidad_lag1,  mrentabilidad_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  mrentabilidad_annual   := 0.5*rowSums( cbind( mrentabilidad_annual_lag1,  mrentabilidad_annual_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  mcomisiones   := 0.5*rowSums( cbind( mcomisiones_lag1,  mcomisiones_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  mactivos_margen   := 0.5*rowSums( cbind( mactivos_margen_lag1,  mactivos_margen_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  mpasivos_margen   := 0.5*rowSums( cbind( mpasivos_margen_lag1,  mpasivos_margen_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  mcuentas_saldo   := 0.5*rowSums( cbind( mcuentas_saldo_lag1, mcuentas_saldo_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ctarjeta_debito_transacciones   := ceiling(0.5*rowSums(cbind( ctarjeta_debito_transacciones_lag1, ctarjeta_debito_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mautoservicio   := 0.5*rowSums( cbind(  mautoservicio_lag1,   mautoservicio_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ctarjeta_visa_transacciones   := ceiling(0.5*rowSums(cbind( ctarjeta_visa_transacciones_lag1, ctarjeta_visa_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mtarjeta_visa_consumo   := 0.5*rowSums( cbind( mtarjeta_visa_consumo_lag1,  mtarjeta_visa_consumo_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ctarjeta_master_transacciones   := ceiling(0.5*rowSums(cbind( ctarjeta_master_transacciones_lag1, ctarjeta_master_transacciones_lead1),na.rm=TRUE))  ]
+  dataset[ foto_mes==202006,  mtarjeta_master_consumo   := 0.5*rowSums( cbind( mtarjeta_master_consumo_lag1,  mtarjeta_master_consumo_lead1) , na.rm=TRUE )]
+  dataset[ foto_mes==202006,  ccomisiones_otras   := ceiling(0.5*rowSums(cbind( ccomisiones_otras_lag1, ccomisiones_otras_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mcomisiones_otras   := 0.5*rowSums( cbind( mcomisiones_otras_lag1,  mcomisiones_otras_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  cextraccion_autoservicio   := ceiling(0.5*rowSums(cbind( cextraccion_autoservicio_lag1, cextraccion_autoservicio_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mextraccion_autoservicio   := 0.5*rowSums( cbind( mextraccion_autoservicio_lag1,  mextraccion_autoservicio_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ccheques_depositados   := ceiling(0.5*rowSums(cbind( ccheques_depositados_lag1, ccheques_depositados_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mcheques_depositados   := 0.5*rowSums( cbind( mcheques_depositados_lag1,  mcheques_depositados_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ccheques_emitidos   := ceiling(0.5*rowSums(cbind( ccheques_emitidos_lag1, ccheques_emitidos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mcheques_emitidos   := 0.5*rowSums( cbind( mcheques_emitidos_lag1,  mcheques_emitidos_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ccheques_depositados_rechazados   := ceiling(0.5*rowSums(cbind( ccheques_depositados_rechazados_lag1, ccheques_depositados_rechazados_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mcheques_depositados_rechazados   := 0.5*rowSums( cbind( mcheques_depositados_rechazados_lag1,  mcheques_depositados_rechazados_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ccheques_emitidos_rechazados   := ceiling(0.5*rowSums(cbind( ccheques_emitidos_rechazados_lag1, ccheques_emitidos_rechazados_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  mcheques_emitidos_rechazados   := 0.5*rowSums( cbind( mcheques_emitidos_rechazados_lag1,  mcheques_emitidos_rechazados_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  tcallcenter   := pmin( tcallcenter_lag1, tcallcenter_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202006,  ccallcenter_transacciones   := ceiling(0.5*rowSums(cbind( ccallcenter_transacciones_lag1, ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  thomebanking   := pmax( thomebanking_lag1, thomebanking_lead1, na.rm = TRUE)  ]
+  dataset[ foto_mes==202006,  chomebanking_transacciones   := ceiling(0.5*rowSums(cbind( ccallcenter_transacciones_lag1, ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  ccajas_transacciones   := ceiling(0.5*rowSums(cbind( ccajas_transacciones_lag1, ccajas_transacciones_lead1),na.rm=TRUE))]
+  dataset[ foto_mes==202006,  ccajas_consultas   := ceiling(0.5*rowSums(cbind( ccajas_consultas_lag1, ccajas_consultas_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  ccajas_depositos   := ceiling(0.5*rowSums(cbind( ccajas_depositos_lag1, ccajas_depositos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  ccajas_extracciones   := ceiling(0.5*rowSums(cbind( ccajas_extracciones_lag1, ccajas_extracciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  ccajas_otras   := ceiling(0.5*rowSums(cbind( ccajas_otras_lag1, ccajas_otras_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  catm_trx   := ceiling(0.5*rowSums(cbind( catm_trx_lag1, catm_trx_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  matm   := 0.5*rowSums( cbind( matm_lag1,  matm_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  catm_trx_other   := ceiling(0.5*rowSums(cbind( catm_trx_other_lag1, catm_trx_other_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  matm_other   := 0.5*rowSums( cbind( matm_other_lag1,  matm_other_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==202006,  ctrx_quarter   := ceiling(0.5*rowSums(cbind( ctrx_quarter_lag1, ctrx_quarter_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==202006,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202006,  cmobile_app_trx   := ceiling(0.5*rowSums(cbind( cmobile_app_trx_lag1, cmobile_app_trx_lead1),na.rm=TRUE)) ]
+  
+  
+  dataset[ foto_mes==202010,  internet  := pmax( internet_lag1, internet_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202011,  internet  := pmax( internet_lag1, internet_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202012,  internet  := pmax( internet_lag1, internet_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202101,  internet  := pmax( internet_lag1, internet_lead1, na.rm = TRUE) ]
+  
+  dataset[ foto_mes==202009,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202010,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE)]
+  dataset[ foto_mes==202011,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202012,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE) ]
+  dataset[ foto_mes==202101,  tmobile_app  := pmax( tmobile_app_lag1, tmobile_app_lead1, na.rm = TRUE) ]
+  
+  #se borran las variables lead1
+  dataset[, grep(".*lead1", colnames(dataset), perl=TRUE, value=TRUE):=NULL]
+  # se borran las variables lag1 y delta1
+  dataset[, grep(".*lag1", colnames(dataset), perl=TRUE, value=TRUE):=NULL]
+  dataset[, grep(".*delta1", colnames(dataset), perl=TRUE, value=TRUE):=NULL]
+  
+  ReportarCampos( dataset )
+}
+
 #------------------------------------------------------------------------------
 #esta funcion supone que dataset esta ordenado por   <numero_de_cliente, foto_mes>
 #calcula el lag y el delta lag
@@ -328,6 +447,20 @@ Lags  <- function( dataset, cols, nlag, deltas )
     }
   }
 
+  ReportarCampos( dataset )
+}
+
+# variables leads para hacer la correccion interpolando el mes previo y el posterior 
+# despues se borra leads 1
+Leads  <- function( dataset, cols, nlead)
+{
+  
+  sufijo  <- paste0( "_lead", nlead )
+  
+  dataset[ , paste0( cols, sufijo) := shift(.SD, nlead, NA, "lead"), 
+           by= numero_de_cliente, 
+           .SDcols= cols]
+  
   ReportarCampos( dataset )
 }
 
@@ -647,11 +780,20 @@ correr_todo  <- function( palancas )
   
   if( palancas$corregir )  Corregir( dataset )  #esta linea debe ir DESPUES de  DummiesNA
   
-  if( palancas$nuevasvars )  AgregarVariables( dataset )
-
   cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 
   if( palancas$lag1 )   Lags( dataset, cols_analiticas, 1, palancas$delta1 )
+  
+  if( palancas$lag1 )   Leads( dataset, cols_analiticas, 1 )
+  
+  #corrijo interpolando, luego se borra las lead1, lag1 y delta1 del dataset
+  if( palancas$lag1 )   Interpolar(dataset)
+  
+  if( palancas$nuevasvars )  AgregarVariables( dataset )
+  
+  #vuelvo a generar los lag1 y delta1 ahora con las variables corregidas
+  if( palancas$lag1 )   Lags( dataset, cols_analiticas, 1, palancas$delta1 ) 
+  
   #nuevas variables cuotas pendientes solo se calcula si existe el lag1
   if ( palancas$lag1 ) Cuotas(dataset)
 
