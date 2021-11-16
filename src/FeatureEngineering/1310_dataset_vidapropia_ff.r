@@ -761,17 +761,16 @@ if(  palancas$interpolar )   Interpolar(dataset)
 
 if( palancas$nuevasvars )  AgregarVariables( dataset )
 
-#vuelvo a generar los lag1 y delta1 ahora con las variables corregidas
-if( palancas$lag1 )   Lags( dataset, cols_analiticas, 1, palancas$delta1 ) 
-
-#nuevas variables cuotas pendientes sólo se calcula si existe el delta1
-if ( palancas$delta1 & palancas$agregar_cuotas) Cuotas(dataset)
-
 ## ------------------------------------- termina aca
 
 if( palancas$tendenciaYmuchomas )  TendenciaYmuchomas( dataset, cols_analiticas)
 
+#vuelvo a generar los lag1 y delta1 ahora con las variables corregidas
 if( palancas$lag1 )   Lags(  cols_analiticas, 1, palancas$delta1 )
+
+#nuevas variables cuotas pendientes sólo se calcula si existe el delta1
+if ( palancas$delta1 & palancas$agregar_cuotas) Cuotas(dataset)
+
 
 #hay una cantidad muy grande de variables, no soporto la presion
 CanaritosImportancia( canaritos_ratio= 0.3 )
