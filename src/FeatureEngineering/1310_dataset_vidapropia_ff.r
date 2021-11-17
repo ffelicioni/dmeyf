@@ -754,7 +754,7 @@ cols_analiticas  <- copy( setdiff( colnames(dataset),  c("numero_de_cliente","fo
 
 #------------------------FF
 # solo si se usa palanca interpolar
-if( palancas$interpolar )   Lags( dataset, cols_analiticas, 1, FALSE )
+if( palancas$interpolar )   Lags( cols_analiticas, 1, FALSE )
 if( palancas$interpolar )   Leads( dataset, cols_analiticas, 1 )
 #corrijo interpolando, luego se borra las lead1, lag1 y delta1 del dataset
 if(  palancas$interpolar )   Interpolar(dataset)
