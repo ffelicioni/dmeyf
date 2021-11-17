@@ -30,7 +30,7 @@ palancas$corregir <-  TRUE    # TRUE o FALSE
 
 palancas$interpolar <-  TRUE    # TRUE o FALSE
 
-palancas$nuevasvars <-  FALSE  #si quiero hacer Feature Engineering manual
+palancas$nuevasvars <-  TRUE  #si quiero hacer Feature Engineering manual
 
 palancas$agregar_cuotas <-  TRUE    # TRUE o FALSE
 
