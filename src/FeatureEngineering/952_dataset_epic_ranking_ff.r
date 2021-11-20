@@ -342,15 +342,15 @@ Interpolar  <- function( dataset )
   dataset[ foto_mes==201801,  thomebanking   := pmax( thomebanking_lag1, thomebanking_lead1, na.rm = TRUE) ]
   dataset[ foto_mes==201801,  chomebanking_transacciones   := pmin( chomebanking_transacciones_lag1, chomebanking_transacciones_lead1, na.rm = TRUE)]
   dataset[ foto_mes==201801,  tcallcenter   := pmin( tcallcenter_lag1, tcallcenter_lead1, na.rm = TRUE)  ]
-  dataset[ foto_mes==201801,  ccallcenter_transacciones   := ceiling(0.5*rowSums(cbind(ccallcenter_transacciones_lag1,ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
-  dataset[ foto_mes==201801,  cprestamos_personales   := ceiling(0.5*rowSums(cbind(cprestamos_personales_lag1,cprestamos_personales_lead1),na.rm=TRUE))  ]
-  dataset[ foto_mes==201801,  mprestamos_personales   := .5*rowSums( cbind( mprestamos_personales_lag1,  mprestamos_personales_lead1) , na.rm=TRUE ) ]
-  dataset[ foto_mes==201801,  mprestamos_hipotecarios  := .5*rowSums( cbind( mprestamos_hipotecarios_lag1,  mprestamos_hipotecarios_lead1) , na.rm=TRUE ) ]
-  dataset[ foto_mes==201801,  ccajas_transacciones   := ceiling(0.5*rowSums(cbind(ccajas_transacciones_lag1,ccajas_transacciones_lead1),na.rm=TRUE)) ]
-  dataset[ foto_mes==201801,  ccajas_consultas   := ceiling(0.5*rowSums(cbind(ccajas_consultas_lag1,ccajas_consultas_lead1),na.rm=TRUE)) ]
-  dataset[ foto_mes==201801,  ccajas_depositos   := ceiling(0.5*rowSums(cbind(ccajas_depositos_lag1,ccajas_depositos_lead1),na.rm=TRUE)) ]
-  dataset[ foto_mes==201801,  ccajas_extracciones   := ceiling(0.5*rowSums(cbind(ccajas_extracciones_lag1,ccajas_extracciones_lead1),na.rm=TRUE)) ]
-  dataset[ foto_mes==201801,  ccajas_otras   := ceiling(0.5*rowSums(cbind(ccajas_otras_lag1,ccajas_otras_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccallcenter_transacciones   := ceiling(rowSums(cbind(ccallcenter_transacciones_lag1,ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  cprestamos_personales   := ceiling(rowSums(cbind(cprestamos_personales_lag1,cprestamos_personales_lead1),na.rm=TRUE))  ]
+  dataset[ foto_mes==201801,  mprestamos_personales   := rowSums( cbind( mprestamos_personales_lag1,  mprestamos_personales_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201801,  mprestamos_hipotecarios  := rowSums( cbind( mprestamos_hipotecarios_lag1,  mprestamos_hipotecarios_lead1) , na.rm=TRUE ) ]
+  dataset[ foto_mes==201801,  ccajas_transacciones   := ceiling(rowSums(cbind(ccajas_transacciones_lag1,ccajas_transacciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_consultas   := ceiling(rowSums(cbind(ccajas_consultas_lag1,ccajas_consultas_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_depositos   := ceiling(rowSums(cbind(ccajas_depositos_lag1,ccajas_depositos_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_extracciones   := ceiling(rowSums(cbind(ccajas_extracciones_lag1,ccajas_extracciones_lead1),na.rm=TRUE)) ]
+  dataset[ foto_mes==201801,  ccajas_otras   := ceiling(rowSums(cbind(ccajas_otras_lag1,ccajas_otras_lead1),na.rm=TRUE)) ]
   
   dataset[ foto_mes==201806,  tcallcenter   :=  pmin( tcallcenter_lag1, tcallcenter_lead1, na.rm = TRUE) ]
   dataset[ foto_mes==201806,  ccallcenter_transacciones   :=  ceiling(0.5*rowSums(cbind(ccallcenter_transacciones_lag1,ccallcenter_transacciones_lead1),na.rm=TRUE)) ]
@@ -833,16 +833,16 @@ correr_todo  <- function( palancas )
   cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
   
   #-------------------------------------------------------------------------
+  # rankings
+  if( palancas$rankingcomun) Ranking_comun( dataset, cols_analiticas)
+  if( palancas$rankingnorm) Ranking_norm( dataset, cols_analiticas)
+  
+  #-------------------------------------------------------------------------
   # solo si se usa palanca interpolar
   if( palancas$interpolar )   Lags( dataset, cols_analiticas, 1, FALSE )
   if( palancas$interpolar )   Leads( dataset, cols_analiticas, 1 )
   #corrijo interpolando, luego se borra las lead1, lag1 y delta1 del dataset
   if(  palancas$interpolar )   Interpolar(dataset)
-  
-  #-------------------------------------------------------------------------
-  # rankings
-  if( palancas$rankingcomun) Ranking_comun( dataset, cols_analiticas)
-  if( palancas$rankingnorm) Ranking_norm( dataset, cols_analiticas)
   
   #-------------------------------------------------------------------------
   #nuevas variables cuotas pendientes, despues borra lag1, y delta1
