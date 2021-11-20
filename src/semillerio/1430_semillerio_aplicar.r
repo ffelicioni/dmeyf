@@ -9,7 +9,7 @@ require("primes")
 
 setwd("~/buckets/b1/")
 
-karch_dataset  <- "./datasets/semillerio_dataset_lag1.csv.gz"
+karch_dataset  <- "./datasets/canaproxy_vidapropia_01.csv.gz"
 ksalida  <- "semillerio" 
 
 kcantidad_semillas  <- 200
@@ -17,11 +17,11 @@ kcantidad_semillas  <- 200
 #ATENCION
 #aqui deben ir los mejores valores que salieron de la optimizacion bayesiana
 x  <- list()
-x$gleaf_size   <-  
-x$gnum_leaves  <-  
-x$learning_rate <-  
-x$feature_fraction <-  
-x$num_iterations  <- 
+x$gleaf_size   <- 69.9182857956365 
+x$gnum_leaves  <- 0.195419942956395  
+x$learning_rate <- 0.0398247445075819  
+x$feature_fraction <- 0.970103676422569 
+x$num_iterations  <- 175 
 
 #------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ particionar  <- function( data,  division, agrupa="",  campo="fold", start=1, se
 
 setwd("~/buckets/b1/")
 
-set.seed( 102191 )   #dejo fija esta semilla
+set.seed( 100005 )   #dejo fija esta semilla
 
 #me genero un vector de semilla buscando numeros primos al azar
 primos  <- generate_primes(min=100000, max=1000000)  #genero TODOS los numeros primos entre 100k y 1M
