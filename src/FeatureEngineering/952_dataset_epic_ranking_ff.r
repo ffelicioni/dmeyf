@@ -22,7 +22,7 @@ setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v952_ranking"   #Muy importante, ir cambiando la version
+palancas$version  <- "v952_can_ranking"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -36,8 +36,8 @@ palancas$agregar_cuotas <-  TRUE    # TRUE o FALSE
 
 palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
 
-palancas$lag1   <- FALSE    #lag de orden 1
-palancas$delta1 <- FALSE    # campo -  lag de orden 1 
+palancas$lag1   <- TRUE    #lag de orden 1
+palancas$delta1 <- TRUE    # campo -  lag de orden 1 
 palancas$lag2   <- FALSE
 palancas$delta2 <- FALSE
 palancas$lag3   <- FALSE
@@ -61,12 +61,12 @@ palancas$maximo6  <- FALSE
 palancas$ratiomax3   <- FALSE   #La idea de Daiana Sparta
 palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 
-palancas$tendencia6  <- FALSE    #Great power comes with great responsability
+palancas$tendencia6  <- TRUE    #Great power comes with great responsability
 
 palancas$rankingcomun<-FALSE
 palancas$rankingnorm<-TRUE
 
-palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
+palancas$canaritosimportancia  <- TRUE  #si me quedo solo con lo mas importante de canaritosimportancia
 
 
 #escribo para saber cuales fueron los parametros
@@ -853,7 +853,8 @@ correr_todo  <- function( palancas )
   
   
   if( palancas$nuevasvars )  AgregarVariables( dataset )
-  #si genero lags y deltas ahora con las variables corregidas
+  
+  #si genero lags y deltas ahora con las variables corregidas, solo lo hace con cols_analiticas
   if( palancas$lag1 )   Lags( dataset, cols_analiticas, 1, palancas$delta1 )
   if( palancas$lag2 )   Lags( dataset, cols_analiticas, 2, palancas$delta2 )
   if( palancas$lag3 )   Lags( dataset, cols_analiticas, 3, palancas$delta3 )
