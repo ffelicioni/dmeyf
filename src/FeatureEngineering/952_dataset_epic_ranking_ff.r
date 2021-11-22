@@ -61,7 +61,7 @@ palancas$maximo6  <- FALSE
 palancas$ratiomax3   <- FALSE   #La idea de Daiana Sparta
 palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 
-palancas$tendencia6  <- TRUE    #Great power comes with great responsability
+palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 
 palancas$rankingcomun<-FALSE
 palancas$rankingnorm<-TRUE
@@ -504,7 +504,7 @@ Cuotas <- function(dataset)
   if( infinitos_qty > 0 )
   {
     cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos hipotecarios. Seran pasados a NA\n" )
-    dataset[mapply(is.infinite, dataset[,cuotas_prestamos_hipotecarios])] <- NA
+    dataset[dataset[,is.infinite(cuotas_prestamos_hipotecarios)],"cuotas_prestamos_hipotecarios"]<-NA
   }
   
   infinitos      <- lapply(names(dataset[,"cuotas_mprestamos_personales"]),function(.name) dataset[ , sum(is.infinite(get(.name)))])
@@ -512,7 +512,8 @@ Cuotas <- function(dataset)
   if( infinitos_qty > 0 )
   {
     cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos personales. Seran pasados a NA\n" )
-    dataset[mapply(is.infinite, dataset[,cuotas_mprestamos_personales])] <- NA
+    #dataset[mapply(is.infinite, dataset[,"cuotas_mprestamos_personales"])] <- NA
+    dataset[dataset[,is.infinite(cuotas_mprestamos_personales)],"cuotas_mprestamos_personales"]<-NA
   }
   
   infinitos      <- lapply(names(dataset[,"cuotas_mprestamos_prendarios"]),function(.name) dataset[ , sum(is.infinite(get(.name)))])
@@ -520,7 +521,7 @@ Cuotas <- function(dataset)
   if( infinitos_qty > 0 )
   {
     cat( "ATENCION, hay", infinitos_qty, "valores infinitos de cuotas de prestamos prendarios. Seran pasados a NA\n" )
-    dataset[mapply(is.infinite, dataset[,cuotas_mprestamos_prendarios])] <- NA
+    dataset[dataset[,is.infinite(cuotas_mprestamos_prendarios)],"cuotas_mprestamos_prendarios"]<-NA
   }
   
   ReportarCampos( dataset )
@@ -802,6 +803,12 @@ CanaritosImportancia  <- function( dataset )
   
   umbral  <- tb_importancia[ Feature %like% "canarito", median(pos) - sd(pos) ]
   col_inutiles  <- tb_importancia[ pos >= umbral | Feature %like% "canarito",  Feature ]
+  
+  #FF AGREGUE ESTO PORQUE CANARITOS ME FILTRABA FOTO MES
+  if ("foto_mes" %in% col_inutiles ){
+    #agrego foto mes 
+    col_inutiles<- setdiff(col_inutiles,c("foto_mes"))
+  }
   
   for( col in col_inutiles )
   {
