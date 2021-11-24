@@ -64,7 +64,8 @@ palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 
 palancas$rankingcomun<-FALSE
-palancas$rankingnorm<-TRUE
+palancas$rankingnorm<-FALSE
+palancas$rankingmes<-TRUE
 
 palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
 
@@ -547,10 +548,15 @@ Ranking_comun <- function( dataset, cols )
 
 Ranking_norm <- function( dataset, cols )
 {
-  dataset[ , paste0( cols, "_rankN") := lapply( .SD, function(x) (frankv(x, na.last="keep", ties.method="dense")/max(frankv(x, na.last="keep", ties.method="dense"),na.rm=TRUE)), by= foto_mes, .SDcols= cols]
+  dataset[ , paste0( cols, "_rankN") := lapply( .SD, function(x) (frankv(x, na.last="keep", ties.method="dense")/max(frankv(x, na.last="keep", ties.method="dense"),na.rm=TRUE))), by= foto_mes, .SDcols= cols]
   ReportarCampos( dataset )
 }
 
+Ranking_mes <- function( dataset, cols )
+{
+  dataset[ , paste0( cols, "_rankM") := lapply( .SD, function(x) frankv(x, na.last="keep", ties.method="dense")/.N), by= foto_mes, .SDcols= cols]
+  ReportarCampos( dataset )
+}
 
 #------------------------------------------------------------------------------
 #calcula el promedio de los ultimos  nhistoria meses
@@ -843,6 +849,7 @@ correr_todo  <- function( palancas )
   # rankings
   if( palancas$rankingcomun) Ranking_comun( dataset, cols_analiticas)
   if( palancas$rankingnorm) Ranking_norm( dataset, cols_analiticas)
+  if( palancas$rankingmes) Ranking_mes( dataset, cols_analiticas)
   
   #-------------------------------------------------------------------------
   # solo si se usa palanca interpolar
