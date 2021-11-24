@@ -36,8 +36,8 @@ palancas$agregar_cuotas <-  TRUE    # TRUE o FALSE
 
 palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
 
-palancas$lag1   <- TRUE    #lag de orden 1
-palancas$delta1 <- TRUE    # campo -  lag de orden 1 
+palancas$lag1   <- FALSE    #lag de orden 1
+palancas$delta1 <- FALSE    # campo -  lag de orden 1 
 palancas$lag2   <- FALSE
 palancas$delta2 <- FALSE
 palancas$lag3   <- FALSE
@@ -66,7 +66,7 @@ palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 palancas$rankingcomun<-FALSE
 palancas$rankingnorm<-TRUE
 
-palancas$canaritosimportancia  <- TRUE  #si me quedo solo con lo mas importante de canaritosimportancia
+palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
 
 
 #escribo para saber cuales fueron los parametros
@@ -547,7 +547,7 @@ Ranking_comun <- function( dataset, cols )
 
 Ranking_norm <- function( dataset, cols )
 {
-  dataset[ , paste0( cols, "_rankN") := lapply( .SD, function(x) frankv(x, na.last="keep", ties.method="dense")/NROW(x)), by= foto_mes, .SDcols= cols]
+  dataset[ , paste0( cols, "_rankN") := lapply( .SD, function(x) (frankv(x, na.last="keep", ties.method="dense")/max(frankv(x, na.last="keep", ties.method="dense"),na.rm=TRUE)), by= foto_mes, .SDcols= cols]
   ReportarCampos( dataset )
 }
 
