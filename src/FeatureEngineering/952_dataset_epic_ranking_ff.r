@@ -15,14 +15,13 @@ require("yaml")
 
 require("lightgbm")
 
-
 #defino la carpeta donde trabajo
 directory.root  <-  "~/buckets/b1/"  #Google Cloud
 setwd( directory.root )
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 
-palancas$version  <- "v952_can_ranking"   #Muy importante, ir cambiando la version
+palancas$version  <- "semillero_1410_lag1"   #Muy importante, ir cambiando la version
 
 palancas$variablesdrift  <- c()   #aqui van las columnas que se quieren eliminar
 
@@ -30,14 +29,14 @@ palancas$corregir <-  TRUE    # TRUE o FALSE
 
 palancas$interpolar <-  TRUE    # TRUE o FALSE
 
-palancas$nuevasvars <-  FALSE  #si quiero hacer Feature Engineering manual
+palancas$nuevasvars <-  TRUE  #si quiero hacer Feature Engineering manual
 
 palancas$agregar_cuotas <-  TRUE    # TRUE o FALSE
 
-palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
+palancas$dummiesNA  <-  TRUE #La idea de Santiago Dellachiesa
 
-palancas$lag1   <- FALSE    #lag de orden 1
-palancas$delta1 <- FALSE    # campo -  lag de orden 1 
+palancas$lag1   <- TRUE    #lag de orden 1
+palancas$delta1 <- TRUE    # campo -  lag de orden 1 
 palancas$lag2   <- FALSE
 palancas$delta2 <- FALSE
 palancas$lag3   <- FALSE
@@ -61,13 +60,13 @@ palancas$maximo6  <- FALSE
 palancas$ratiomax3   <- FALSE   #La idea de Daiana Sparta
 palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 
-palancas$tendencia6  <- FALSE    #Great power comes with great responsability
+palancas$tendencia6  <- TRUE    #Great power comes with great responsability
 
 palancas$rankingcomun<-FALSE
 palancas$rankingnorm<-FALSE
 palancas$rankingmes<-TRUE
 
-palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
+palancas$canaritosimportancia  <- TRUE  #si me quedo solo con lo mas importante de canaritosimportancia
 
 
 #escribo para saber cuales fueron los parametros
@@ -853,6 +852,9 @@ correr_todo  <- function( palancas )
   
   #-------------------------------------------------------------------------
   # solo si se usa palanca interpolar
+  
+  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria","internet") )
+  
   if( palancas$interpolar )   Lags( dataset, cols_analiticas, 1, FALSE )
   if( palancas$interpolar )   Leads( dataset, cols_analiticas, 1 )
   #corrijo interpolando, luego se borra las lead1, lag1 y delta1 del dataset
@@ -889,9 +891,10 @@ correr_todo  <- function( palancas )
   if(palancas$ratiomean6) RatioMean( dataset, cols_analiticas, 6) #Derivado de la idea de Daiana Sparta
   
   
+  cols_analiticas<-c("mdescubierto_preacordado","ctarjeta_visa","mcuenta_corriente","mv_status07","ccomisiones_mantenimiento")
   if( palancas$tendencia6 )  Tendencia( dataset, cols_analiticas)
   
-  
+  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
   if( palancas$canaritosimportancia )  CanaritosImportancia( dataset )
   
   
