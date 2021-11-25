@@ -891,7 +891,7 @@ correr_todo  <- function( palancas )
   if(palancas$ratiomean6) RatioMean( dataset, cols_analiticas, 6) #Derivado de la idea de Daiana Sparta
   
   
-  cols_analiticas<-c("mdescubierto_preacordado","ctarjeta_visa","mcuenta_corriente","mv_status07","ccomisiones_mantenimiento")
+  cols_analiticas<-c("mdescubierto_preacordado","ctarjeta_visa","mcuenta_corriente","mv_status07","ccomisiones_mantenimiento","mprestamos_personales")
   if( palancas$tendencia6 )  Tendencia( dataset, cols_analiticas)
   
   cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
