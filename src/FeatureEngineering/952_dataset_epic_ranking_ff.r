@@ -853,7 +853,7 @@ correr_todo  <- function( palancas )
   #-------------------------------------------------------------------------
   # solo si se usa palanca interpolar
   
-  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria","internet") )
+  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
   
   if( palancas$interpolar )   Lags( dataset, cols_analiticas, 1, FALSE )
   if( palancas$interpolar )   Leads( dataset, cols_analiticas, 1 )
