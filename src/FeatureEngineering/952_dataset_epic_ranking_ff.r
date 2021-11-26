@@ -33,7 +33,7 @@ palancas$nuevasvars <-  TRUE  #si quiero hacer Feature Engineering manual
 
 palancas$agregar_cuotas <-  TRUE    # TRUE o FALSE
 
-palancas$dummiesNA  <-  TRUE #La idea de Santiago Dellachiesa
+palancas$dummiesNA  <-  FALSE #La idea de Santiago Dellachiesa
 
 palancas$lag1   <- TRUE    #lag de orden 1
 palancas$delta1 <- TRUE    # campo -  lag de orden 1 
@@ -337,7 +337,6 @@ AgregarVariables  <- function( dataset )
 Interpolar  <- function( dataset )
 {
   #acomodo los errores del dataset interpolando el futuro y el pasado
-  
   dataset[ foto_mes==201801,  internet   := pmax( internet_lag1, internet_lead1, na.rm = TRUE)  ]
   dataset[ foto_mes==201801,  thomebanking   := pmax( thomebanking_lag1, thomebanking_lead1, na.rm = TRUE) ]
   dataset[ foto_mes==201801,  chomebanking_transacciones   := pmin( chomebanking_transacciones_lag1, chomebanking_transacciones_lead1, na.rm = TRUE)]
@@ -485,7 +484,6 @@ Leads  <- function( dataset, cols, nlead)
   dataset[ , paste0( cols, sufijo) := shift(.SD, nlead, NA, "lead"), 
            by= numero_de_cliente, 
            .SDcols= cols]
-  
   ReportarCampos( dataset )
 }
 
@@ -553,7 +551,7 @@ Ranking_norm <- function( dataset, cols )
 
 Ranking_mes <- function( dataset, cols )
 {
-  dataset[ , paste0( cols, "_rankM") := lapply( .SD, function(x) frankv(x, na.last="keep", ties.method="dense")/.N), by= foto_mes, .SDcols= cols]
+  dataset[ , paste0( cols, "_rankM") := lapply( .SD, function(x) (frankv(x, na.last="keep", ties.method="dense")/.N)), by= foto_mes, .SDcols= cols]
   ReportarCampos( dataset )
 }
 
@@ -853,10 +851,10 @@ correr_todo  <- function( palancas )
   #-------------------------------------------------------------------------
   # solo si se usa palanca interpolar
   
-  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
-  
   if( palancas$interpolar )   Lags( dataset, cols_analiticas, 1, FALSE )
   if( palancas$interpolar )   Leads( dataset, cols_analiticas, 1 )
+  
+  
   #corrijo interpolando, luego se borra las lead1, lag1 y delta1 del dataset
   if(  palancas$interpolar )   Interpolar(dataset)
   
@@ -891,10 +889,9 @@ correr_todo  <- function( palancas )
   if(palancas$ratiomean6) RatioMean( dataset, cols_analiticas, 6) #Derivado de la idea de Daiana Sparta
   
   
-  cols_analiticas<-c("mdescubierto_preacordado","ctarjeta_visa","mcuenta_corriente","mv_status07","ccomisiones_mantenimiento","mprestamos_personales")
-  if( palancas$tendencia6 )  Tendencia( dataset, cols_analiticas)
+  cols_tendencia<-c("mdescubierto_preacordado","ctarjeta_visa","mcuenta_corriente","mv_status07","ccomisiones_mantenimiento","mprestamos_personales")
+  if( palancas$tendencia6 )  Tendencia( dataset, cols_tendencia)
   
-  cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
   if( palancas$canaritosimportancia )  CanaritosImportancia( dataset )
   
   
