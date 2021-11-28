@@ -22,7 +22,7 @@ palancas$version  <- "v1"   #Muy importante, ir cambiando la version
 #achico el dataset
 cantidad_meses<-c(2)
 ## los baja+1
-dataset  <-  dataset[  clase_ternaria =="BAJA+1"  & foto_mes>=202001  & foto_mes<=202011, ]
+dataset  <-  dataset[  clase_ternaria =="BAJA+1", ]
 
 #los que se fueron en 2020
 dataset<-dataset[foto_mes>=202001  & foto_mes<=202011,]                 #restrinjo a los que se van el ultimo año
@@ -36,6 +36,8 @@ dataset[, foto_mes_date_ini:=NULL]
 dataset[, foto_mes_salida:=NULL]
 
 dataset<-dataset[foto_mes>=foto_mes_ini] #me quedo solo con los meses elegidos
+
+dataset<-dataset[foto_mes>=202001  & foto_mes<=202011, ]
 
 fwrite( dataset,
         paste0( "./datasets/dataset_bajan", palancas$version, ".csv.gz" ),
