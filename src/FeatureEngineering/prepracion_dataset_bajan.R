@@ -21,8 +21,10 @@ palancas$version  <- "v1"   #Muy importante, ir cambiando la version
 
 #achico el dataset
 cantidad_meses<-c(2)
-## los baja+1
-dataset  <-  dataset[  clase_ternaria =="BAJA+1", ]
+## id bajas
+
+id_baja1<-dataset[clase_ternaria=='BAJA+1','numero_de_cliente'] #los que se van al mes
+dataset<-dataset[numero_de_cliente %in% id_baja1$numero_de_cliente,]
 
 #los que se fueron en 2020
 dataset<-dataset[foto_mes>=202001  & foto_mes<=202011,]                 #restrinjo a los que se van el ultimo año
