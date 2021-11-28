@@ -13,14 +13,14 @@ require("lubridate")
 setwd( "~/buckets/b1/" )
 
 #leo el dataset , aqui se puede usar algun super dataset con Feature Engineering
-dataset  <- fread( "datasetsOri/paquete_premium.csv.gz", stringsAsFactors= TRUE)
+dataset  <- fread( "datasetsOri/paquete_premium.csv.gz")
 #gc()
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 palancas$version  <- "v1"   #Muy importante, ir cambiando la version
 
 #achico el dataset
-cantidad_meses<-c(2)
+cantidad_meses<-c(6)
 ## id bajas
 
 id_baja1<-dataset[clase_ternaria=='BAJA+1','numero_de_cliente'] #los que se van al mes
@@ -37,9 +37,7 @@ dataset[, foto_mes_date:=NULL]
 dataset[, foto_mes_date_ini:=NULL]
 dataset[, foto_mes_salida:=NULL]
 
-dataset<-dataset[foto_mes>=foto_mes_ini] #me quedo solo con los meses elegidos
-
-dataset<-dataset[foto_mes>=202001  & foto_mes<=202011, ]
+dataset<-dataset[foto_mes>foto_mes_ini] #me quedo solo con los meses elegidos
 
 fwrite( dataset,
         paste0( "./datasets/dataset_bajan", palancas$version, ".csv.gz" ),
