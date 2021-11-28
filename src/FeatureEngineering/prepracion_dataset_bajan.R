@@ -6,6 +6,10 @@ require("randomForest")
 rm( list=ls() )  #remove all objects
 gc()             #garbage collection
 
+require("data.table")
+require("lightgbm")
+require("lubridate")
+
 setwd( "~/buckets/b1/" )
 
 #leo el dataset , aqui se puede usar algun super dataset con Feature Engineering
@@ -14,13 +18,6 @@ dataset  <- fread( "datasetsOri/paquete_premium.csv.gz", stringsAsFactors= TRUE)
 
 palancas  <- list()  #variable con las palancas para activar/desactivar
 palancas$version  <- "v1"   #Muy importante, ir cambiando la version
-
-rm( list=ls() )  #remove all objects
-gc()             #garbage collection
-
-require("data.table")
-require("lightgbm")
-require("lubridate")
 
 #achico el dataset
 cantidad_meses<-c(2)
